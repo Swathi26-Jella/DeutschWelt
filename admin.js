@@ -1,15 +1,23 @@
 // ======================================================
-// DEUTSCHWELT ADMIN CONTENT MANAGER
+// DEUTSCHWELT ADMIN
 // ======================================================
 
 
+// ======================================================
+// SUPABASE CONFIG
+// ======================================================
+
 const ADMIN_SUPABASE_URL =
-    "https://llxcyabptsbdtsdhkzkc.supabase.co";
+    "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
 
 
 const ADMIN_SUPABASE_ANON_KEY =
-    "sb_publishable_MKh0z87kMiDAQX3jnaoADQ_-D0_XXd4";
+    "PASTE_YOUR_PUBLIC_ANON_OR_PUBLISHABLE_KEY_HERE";
 
+
+// ======================================================
+// VARIABLES
+// ======================================================
 
 let adminSupabase = null;
 
@@ -18,17 +26,44 @@ let selectedContentType =
 
 
 // ======================================================
-// INITIALIZE SUPABASE
+// CREATE SUPABASE CLIENT
 // ======================================================
 
 function createAdminSupabase() {
 
     if (
-        !window.supabase
+        typeof window.supabase ===
+        "undefined"
     ) {
 
         throw new Error(
             "Supabase library was not loaded."
+        );
+
+    }
+
+
+    if (
+        ADMIN_SUPABASE_URL.includes(
+            "PASTE_YOUR"
+        )
+    ) {
+
+        throw new Error(
+            "Supabase URL has not been entered."
+        );
+
+    }
+
+
+    if (
+        ADMIN_SUPABASE_ANON_KEY.includes(
+            "PASTE_YOUR"
+        )
+    ) {
+
+        throw new Error(
+            "Supabase public key has not been entered."
         );
 
     }
@@ -44,40 +79,13 @@ function createAdminSupabase() {
 
 
 // ======================================================
-// JSON ARRAY
-// ======================================================
-
-function linesToArray(value) {
-
-    if (!value) {
-
-        return [];
-
-    }
-
-
-    return value
-        .split("\n")
-        .map(
-            line =>
-                line.trim()
-        )
-        .filter(
-            line =>
-                line.length > 0
-        );
-
-}
-
-
-// ======================================================
 // SHOW MESSAGE
 // ======================================================
 
 function showMessage(
     elementId,
     message,
-    type = "success"
+    type = "info"
 ) {
 
     const element =
@@ -122,9 +130,7 @@ async function loginAdmin(
 
 
     if (error) {
-
         throw error;
-
     }
 
 
@@ -134,7 +140,7 @@ async function loginAdmin(
 
 
 // ======================================================
-// CHECK LOGIN
+// CHECK EXISTING SESSION
 // ======================================================
 
 async function checkSession() {
@@ -148,11 +154,7 @@ async function checkSession() {
 
 
     if (error) {
-
-        console.error(error);
-
-        return;
-
+        throw error;
     }
 
 
@@ -169,7 +171,7 @@ async function checkSession() {
 
 
 // ======================================================
-// SHOW ADMIN PANEL
+// SHOW ADMIN
 // ======================================================
 
 function showAdminPanel() {
@@ -292,6 +294,33 @@ function switchContentType(
 
 
 // ======================================================
+// TEXT → ARRAY
+// ======================================================
+
+function linesToArray(
+    value
+) {
+
+    if (!value) {
+        return [];
+    }
+
+
+    return value
+        .split("\n")
+        .map(
+            item =>
+                item.trim()
+        )
+        .filter(
+            item =>
+                item.length > 0
+        );
+
+}
+
+
+// ======================================================
 // SAVE TOPIC
 // ======================================================
 
@@ -373,15 +402,6 @@ async function saveTopic() {
     };
 
 
-    if (!row.level) {
-
-        throw new Error(
-            "Bitte ein Niveau auswählen."
-        );
-
-    }
-
-
     if (!row.title) {
 
         throw new Error(
@@ -396,15 +416,11 @@ async function saveTopic() {
     } =
         await adminSupabase
             .from("topics")
-            .insert(
-                row
-            );
+            .insert(row);
 
 
     if (error) {
-
         throw error;
-
     }
 
 }
@@ -499,15 +515,11 @@ async function saveVocabulary() {
     } =
         await adminSupabase
             .from("vocabulary")
-            .insert(
-                row
-            );
+            .insert(row);
 
 
     if (error) {
-
         throw error;
-
     }
 
 }
@@ -604,15 +616,11 @@ async function saveGrammar() {
     } =
         await adminSupabase
             .from("grammar_topics")
-            .insert(
-                row
-            );
+            .insert(row);
 
 
     if (error) {
-
         throw error;
-
     }
 
 }
@@ -633,29 +641,32 @@ function clearContentForm() {
 
     document
         .getElementById(
-            "sortOrder"
+            "contentLevel"
         )
-        .value = 1;
+        .value =
+        "A1";
 
 
     document
         .getElementById(
-            "contentLevel"
+            "sortOrder"
         )
-        .value = "A1";
+        .value =
+        "1";
 
 
     document
         .getElementById(
             "vocabArticle"
         )
-        .value = "";
+        .value =
+        "";
 
 }
 
 
 // ======================================================
-// LOGIN FORM
+// LOGIN EVENT
 // ======================================================
 
 async function handleLogin(
@@ -692,14 +703,14 @@ async function handleLogin(
         );
 
 
+        showAdminPanel();
+
+
         showMessage(
             "loginMessage",
             "Anmeldung erfolgreich.",
             "success"
         );
-
-
-        showAdminPanel();
 
 
     } catch (error) {
@@ -722,7 +733,7 @@ async function handleLogin(
 
 
 // ======================================================
-// SAVE FORM
+// SAVE EVENT
 // ======================================================
 
 async function handleSave(
@@ -755,12 +766,6 @@ async function handleSave(
 
             await saveTopic();
 
-            showMessage(
-                "saveMessage",
-                "✅ Topic wurde in Supabase gespeichert.",
-                "success"
-            );
-
         }
 
 
@@ -770,12 +775,6 @@ async function handleSave(
         ) {
 
             await saveVocabulary();
-
-            showMessage(
-                "saveMessage",
-                "✅ Wort wurde in Supabase gespeichert.",
-                "success"
-            );
 
         }
 
@@ -787,12 +786,6 @@ async function handleSave(
 
             await saveGrammar();
 
-            showMessage(
-                "saveMessage",
-                "✅ Grammatik wurde in Supabase gespeichert.",
-                "success"
-            );
-
         }
 
 
@@ -801,7 +794,7 @@ async function handleSave(
 
         showMessage(
             "saveMessage",
-            "✅ Gespeichert. Deine Google-Sheets-Sicherung übernimmt den neuen Inhalt beim nächsten Backup.",
+            "✅ Erfolgreich in Supabase gespeichert. Der nächste Google-Sheets-Backup-Lauf übernimmt den neuen Inhalt.",
             "success"
         );
 
@@ -840,15 +833,25 @@ async function handleSave(
 
 async function logout() {
 
-    await adminSupabase.auth.signOut();
+    try {
 
-    showLoginPanel();
+        await adminSupabase.auth.signOut();
+
+        showLoginPanel();
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+    }
 
 }
 
 
 // ======================================================
-// INITIALIZATION
+// INITIALIZE
 // ======================================================
 
 document.addEventListener(
@@ -860,11 +863,6 @@ document.addEventListener(
             createAdminSupabase();
 
 
-            await checkSession();
-
-
-            // Login
-
             document
                 .getElementById(
                     "loginForm"
@@ -874,8 +872,6 @@ document.addEventListener(
                     handleLogin
                 );
 
-
-            // Save
 
             document
                 .getElementById(
@@ -887,8 +883,6 @@ document.addEventListener(
                 );
 
 
-            // Logout
-
             document
                 .getElementById(
                     "logoutButton"
@@ -898,8 +892,6 @@ document.addEventListener(
                     logout
                 );
 
-
-            // Content tabs
 
             document
                 .querySelectorAll(
@@ -928,11 +920,16 @@ document.addEventListener(
             );
 
 
+            await checkSession();
+
+
         } catch (error) {
 
             console.error(
+                "Admin initialization error:",
                 error
             );
+
 
             showMessage(
                 "loginMessage",
