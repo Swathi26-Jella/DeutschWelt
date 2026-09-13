@@ -8,11 +8,11 @@
 // ======================================================
 
 const ADMIN_SUPABASE_URL =
-    "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+    "https://llxcyabptsbdtsdhkzkc.supabase.co";
 
 
 const ADMIN_SUPABASE_ANON_KEY =
-    "PASTE_YOUR_PUBLIC_ANON_OR_PUBLISHABLE_KEY_HERE";
+    "sb_publishable_MKh0z87kMiDAQX3jnaoADQ_-D0_XXd4";
 
 
 // ======================================================
