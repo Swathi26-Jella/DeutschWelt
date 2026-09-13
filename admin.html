@@ -12,7 +12,10 @@
 
     <title>DeutschWelt – Content Manager</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
 
@@ -68,9 +71,9 @@
 <main class="admin-page">
 
 
-    <!-- =================================================
+    <!-- =====================================================
          LOGIN
-         ================================================= -->
+         ===================================================== -->
 
     <section
         id="adminLogin"
@@ -96,8 +99,7 @@
 
         <form id="loginForm">
 
-
-            <label>
+            <label for="loginEmail">
                 E-Mail
             </label>
 
@@ -105,11 +107,12 @@
                 type="email"
                 id="loginEmail"
                 placeholder="Deine E-Mail-Adresse"
+                autocomplete="email"
                 required
             >
 
 
-            <label>
+            <label for="loginPassword">
                 Passwort
             </label>
 
@@ -117,6 +120,7 @@
                 type="password"
                 id="loginPassword"
                 placeholder="Dein Passwort"
+                autocomplete="current-password"
                 required
             >
 
@@ -140,9 +144,9 @@
 
 
 
-    <!-- =================================================
-         CONTENT MANAGER
-         ================================================= -->
+    <!-- =====================================================
+         ADMIN PANEL
+         ===================================================== -->
 
     <section
         id="adminPanel"
@@ -163,8 +167,8 @@
                 </h1>
 
                 <p>
-                    Ein Formular für Topics, Wortschatz
-                    und Grammatik.
+                    Topics, Wortschatz und Grammatik
+                    direkt in Supabase speichern.
                 </p>
 
             </div>
@@ -183,7 +187,7 @@
 
 
         <!-- =================================================
-             CONTENT TYPE
+             TYPE SELECTION
              ================================================= -->
 
         <div class="content-type-tabs">
@@ -196,6 +200,7 @@
                 📚 Topic
             </button>
 
+
             <button
                 type="button"
                 class="content-type-button"
@@ -203,6 +208,7 @@
             >
                 🗣️ Wortschatz
             </button>
+
 
             <button
                 type="button"
@@ -216,22 +222,21 @@
 
 
 
-        <!-- =================================================
-             LEVEL
-             ================================================= -->
-
         <form id="contentForm">
 
 
-            <section class="admin-card">
+            <!-- =================================================
+                 COMMON FIELDS
+                 ================================================= -->
 
+            <section class="admin-card">
 
                 <div class="admin-form-grid">
 
 
                     <div>
 
-                        <label>
+                        <label for="contentLevel">
                             Niveau
                         </label>
 
@@ -263,7 +268,7 @@
 
                     <div id="categoryField">
 
-                        <label>
+                        <label for="category">
                             Kategorie
                         </label>
 
@@ -278,7 +283,7 @@
 
                     <div>
 
-                        <label>
+                        <label for="sortOrder">
                             Sortierung
                         </label>
 
@@ -295,13 +300,12 @@
 
                 </div>
 
-
             </section>
 
 
 
             <!-- =================================================
-                 TOPIC FORM
+                 TOPIC
                  ================================================= -->
 
             <section
@@ -314,7 +318,7 @@
                 </h2>
 
 
-                <label>
+                <label for="topicTitle">
                     Titel
                 </label>
 
@@ -325,7 +329,7 @@
                 >
 
 
-                <label>
+                <label for="topicSummary">
                     Kurze Zusammenfassung
                 </label>
 
@@ -336,7 +340,7 @@
                 >
 
 
-                <label>
+                <label for="topicExplanation">
                     Erklärung
                 </label>
 
@@ -347,7 +351,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="topicKeyPoints">
                     Wichtig
                 </label>
 
@@ -358,7 +362,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="topicPatterns">
                     Satzmuster
                 </label>
 
@@ -369,7 +373,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="topicExamples">
                     Beispiele
                 </label>
 
@@ -380,7 +384,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="topicMerke">
                     Merke
                 </label>
 
@@ -391,7 +395,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="topicIcon">
                     Icon / Emoji
                 </label>
 
@@ -402,7 +406,7 @@
                 >
 
 
-                <label>
+                <label for="topicImage">
                     Bild-URL
                 </label>
 
@@ -412,13 +416,12 @@
                     placeholder="Optional"
                 >
 
-
             </section>
 
 
 
             <!-- =================================================
-                 VOCABULARY FORM
+                 VOCABULARY
                  ================================================= -->
 
             <section
@@ -431,7 +434,7 @@
                 </h2>
 
 
-                <label>
+                <label for="vocabWord">
                     Wort
                 </label>
 
@@ -442,7 +445,7 @@
                 >
 
 
-                <label>
+                <label for="vocabArticle">
                     Artikel
                 </label>
 
@@ -467,7 +470,7 @@
                 </select>
 
 
-                <label>
+                <label for="vocabPlural">
                     Plural
                 </label>
 
@@ -478,7 +481,7 @@
                 >
 
 
-                <label>
+                <label for="vocabMeaning">
                     Bedeutung
                 </label>
 
@@ -489,7 +492,7 @@
                 >
 
 
-                <label>
+                <label for="vocabExample">
                     Beispielsatz
                 </label>
 
@@ -500,7 +503,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="vocabNote">
                     Hinweis
                 </label>
 
@@ -511,7 +514,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="vocabImage">
                     Bild-URL
                 </label>
 
@@ -521,13 +524,12 @@
                     placeholder="Optional"
                 >
 
-
             </section>
 
 
 
             <!-- =================================================
-                 GRAMMAR FORM
+                 GRAMMAR
                  ================================================= -->
 
             <section
@@ -540,7 +542,7 @@
                 </h2>
 
 
-                <label>
+                <label for="grammarTitle">
                     Titel
                 </label>
 
@@ -551,7 +553,7 @@
                 >
 
 
-                <label>
+                <label for="grammarShort">
                     Kurze Erklärung
                 </label>
 
@@ -562,7 +564,7 @@
                 >
 
 
-                <label>
+                <label for="grammarExplanation">
                     Erklärung
                 </label>
 
@@ -573,7 +575,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="grammarRule">
                     Regel
                 </label>
 
@@ -584,7 +586,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="grammarKeyPoints">
                     Wichtig
                 </label>
 
@@ -595,7 +597,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="grammarPatterns">
                     Satzmuster
                 </label>
 
@@ -606,7 +608,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="grammarExamples">
                     Beispiele
                 </label>
 
@@ -617,7 +619,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="grammarMerke">
                     Merke
                 </label>
 
@@ -628,7 +630,7 @@
                 ></textarea>
 
 
-                <label>
+                <label for="grammarImage">
                     Bild-URL
                 </label>
 
@@ -637,7 +639,6 @@
                     id="grammarImage"
                     placeholder="Optional"
                 >
-
 
             </section>
 
@@ -675,9 +676,9 @@
             </strong>
 
             <p>
-                Der Inhalt wird sofort in Supabase gespeichert.
+                Der Inhalt wird direkt in Supabase gespeichert.
                 Deine vorhandene Google-Sheets-Sicherung übernimmt
-                die Daten beim nächsten Backup.
+                ihn beim nächsten Backup.
             </p>
 
         </div>
@@ -704,6 +705,7 @@
 
         </div>
 
+
         <div>
 
             <p>
@@ -717,7 +719,17 @@
 </footer>
 
 
-<script src="script.js"></script>
+<!-- =========================================================
+     IMPORTANT:
+     LOAD SUPABASE FIRST
+     ========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+<!-- Admin code -->
 
 <script src="admin.js"></script>
 
