@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeutschWelt – Content Manager</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+        <a
+            href="index.html"
+            class="logo"
+        >
+
+            <span class="logo-icon">
+                🇩🇪
+            </span>
+
+            <span>
+                DeutschWelt
+            </span>
+
+        </a>
+
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                Startseite
+            </a>
+
+            <a href="lernen.html?level=A1">
+                Lernwelten
+            </a>
+
+            <a href="wortschatz.html">
+                Wortschatz
+            </a>
+
+            <a href="grammatik.html">
+                Grammatik
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="admin-page">
+
+
+    <!-- =================================================
+         LOGIN
+         ================================================= -->
+
+    <section
+        id="adminLogin"
+        class="admin-card"
+    >
+
+        <div class="admin-card-heading">
+
+            <span class="eyebrow">
+                DeutschWelt
+            </span>
+
+            <h1>
+                Content Manager
+            </h1>
+
+            <p>
+                Melde dich an, um Lerninhalte hinzuzufügen.
+            </p>
+
+        </div>
+
+
+        <form id="loginForm">
+
+
+            <label>
+                E-Mail
+            </label>
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Deine E-Mail-Adresse"
+                required
+            >
+
+
+            <label>
+                Passwort
+            </label>
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Dein Passwort"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="admin-primary-button"
+            >
+                Anmelden
+            </button>
+
+
+            <div
+                id="loginMessage"
+                class="admin-message"
+            ></div>
+
+        </form>
+
+    </section>
+
+
+
+    <!-- =================================================
+         CONTENT MANAGER
+         ================================================= -->
+
+    <section
+        id="adminPanel"
+        class="admin-panel hidden"
+    >
+
+
+        <div class="admin-topbar">
+
+            <div>
+
+                <span class="eyebrow">
+                    Content Manager
+                </span>
+
+                <h1>
+                    Lerninhalt hinzufügen
+                </h1>
+
+                <p>
+                    Ein Formular für Topics, Wortschatz
+                    und Grammatik.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="admin-secondary-button"
+            >
+                Abmelden
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CONTENT TYPE
+             ================================================= -->
+
+        <div class="content-type-tabs">
+
+            <button
+                type="button"
+                class="content-type-button active"
+                data-content-type="topic"
+            >
+                📚 Topic
+            </button>
+
+            <button
+                type="button"
+                class="content-type-button"
+                data-content-type="vocabulary"
+            >
+                🗣️ Wortschatz
+            </button>
+
+            <button
+                type="button"
+                class="content-type-button"
+                data-content-type="grammar"
+            >
+                🧩 Grammatik
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             LEVEL
+             ================================================= -->
+
+        <form id="contentForm">
+
+
+            <section class="admin-card">
+
+
+                <div class="admin-form-grid">
+
+
+                    <div>
+
+                        <label>
+                            Niveau
+                        </label>
+
+                        <select
+                            id="contentLevel"
+                            required
+                        >
+
+                            <option value="A1">
+                                A1
+                            </option>
+
+                            <option value="A2">
+                                A2
+                            </option>
+
+                            <option value="B1">
+                                B1
+                            </option>
+
+                            <option value="B2">
+                                B2
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div id="categoryField">
+
+                        <label>
+                            Kategorie
+                        </label>
+
+                        <input
+                            type="text"
+                            id="category"
+                            placeholder="z. B. Essen"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Sortierung
+                        </label>
+
+                        <input
+                            type="number"
+                            id="sortOrder"
+                            value="1"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 TOPIC FORM
+                 ================================================= -->
+
+            <section
+                id="topicForm"
+                class="admin-card"
+            >
+
+                <h2>
+                    📚 Neues Topic
+                </h2>
+
+
+                <label>
+                    Titel
+                </label>
+
+                <input
+                    type="text"
+                    id="topicTitle"
+                    placeholder="z. B. Frühstück"
+                >
+
+
+                <label>
+                    Kurze Zusammenfassung
+                </label>
+
+                <input
+                    type="text"
+                    id="topicSummary"
+                    placeholder="Worum geht es?"
+                >
+
+
+                <label>
+                    Erklärung
+                </label>
+
+                <textarea
+                    id="topicExplanation"
+                    rows="7"
+                    placeholder="Einfache Erklärung für Lernende..."
+                ></textarea>
+
+
+                <label>
+                    Wichtig
+                </label>
+
+                <textarea
+                    id="topicKeyPoints"
+                    rows="5"
+                    placeholder="Eine Zeile pro Punkt"
+                ></textarea>
+
+
+                <label>
+                    Satzmuster
+                </label>
+
+                <textarea
+                    id="topicPatterns"
+                    rows="5"
+                    placeholder="Eine Zeile pro Satzmuster"
+                ></textarea>
+
+
+                <label>
+                    Beispiele
+                </label>
+
+                <textarea
+                    id="topicExamples"
+                    rows="5"
+                    placeholder="Ein Beispielsatz pro Zeile"
+                ></textarea>
+
+
+                <label>
+                    Merke
+                </label>
+
+                <textarea
+                    id="topicMerke"
+                    rows="3"
+                    placeholder="Wichtiger Merksatz..."
+                ></textarea>
+
+
+                <label>
+                    Icon / Emoji
+                </label>
+
+                <input
+                    type="text"
+                    id="topicIcon"
+                    placeholder="📚"
+                >
+
+
+                <label>
+                    Bild-URL
+                </label>
+
+                <input
+                    type="url"
+                    id="topicImage"
+                    placeholder="Optional"
+                >
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 VOCABULARY FORM
+                 ================================================= -->
+
+            <section
+                id="vocabularyForm"
+                class="admin-card hidden"
+            >
+
+                <h2>
+                    🗣️ Neues Wort
+                </h2>
+
+
+                <label>
+                    Wort
+                </label>
+
+                <input
+                    type="text"
+                    id="vocabWord"
+                    placeholder="z. B. Apfel"
+                >
+
+
+                <label>
+                    Artikel
+                </label>
+
+                <select id="vocabArticle">
+
+                    <option value="">
+                        Kein Artikel
+                    </option>
+
+                    <option value="der">
+                        der
+                    </option>
+
+                    <option value="die">
+                        die
+                    </option>
+
+                    <option value="das">
+                        das
+                    </option>
+
+                </select>
+
+
+                <label>
+                    Plural
+                </label>
+
+                <input
+                    type="text"
+                    id="vocabPlural"
+                    placeholder="z. B. Äpfel"
+                >
+
+
+                <label>
+                    Bedeutung
+                </label>
+
+                <input
+                    type="text"
+                    id="vocabMeaning"
+                    placeholder="z. B. apple"
+                >
+
+
+                <label>
+                    Beispielsatz
+                </label>
+
+                <textarea
+                    id="vocabExample"
+                    rows="4"
+                    placeholder="Ich esse einen Apfel."
+                ></textarea>
+
+
+                <label>
+                    Hinweis
+                </label>
+
+                <textarea
+                    id="vocabNote"
+                    rows="3"
+                    placeholder="Optional"
+                ></textarea>
+
+
+                <label>
+                    Bild-URL
+                </label>
+
+                <input
+                    type="url"
+                    id="vocabImage"
+                    placeholder="Optional"
+                >
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 GRAMMAR FORM
+                 ================================================= -->
+
+            <section
+                id="grammarForm"
+                class="admin-card hidden"
+            >
+
+                <h2>
+                    🧩 Neues Grammatikthema
+                </h2>
+
+
+                <label>
+                    Titel
+                </label>
+
+                <input
+                    type="text"
+                    id="grammarTitle"
+                    placeholder="z. B. weil"
+                >
+
+
+                <label>
+                    Kurze Erklärung
+                </label>
+
+                <input
+                    type="text"
+                    id="grammarShort"
+                    placeholder="Gründe ausdrücken"
+                >
+
+
+                <label>
+                    Erklärung
+                </label>
+
+                <textarea
+                    id="grammarExplanation"
+                    rows="6"
+                    placeholder="Einfache Erklärung..."
+                ></textarea>
+
+
+                <label>
+                    Regel
+                </label>
+
+                <textarea
+                    id="grammarRule"
+                    rows="3"
+                    placeholder="weil + Verb am Ende"
+                ></textarea>
+
+
+                <label>
+                    Wichtig
+                </label>
+
+                <textarea
+                    id="grammarKeyPoints"
+                    rows="5"
+                    placeholder="Eine Zeile pro Punkt"
+                ></textarea>
+
+
+                <label>
+                    Satzmuster
+                </label>
+
+                <textarea
+                    id="grammarPatterns"
+                    rows="5"
+                    placeholder="Eine Zeile pro Satzmuster"
+                ></textarea>
+
+
+                <label>
+                    Beispiele
+                </label>
+
+                <textarea
+                    id="grammarExamples"
+                    rows="5"
+                    placeholder="Ein Beispiel pro Zeile"
+                ></textarea>
+
+
+                <label>
+                    Merke
+                </label>
+
+                <textarea
+                    id="grammarMerke"
+                    rows="3"
+                    placeholder="Wichtiger Merksatz..."
+                ></textarea>
+
+
+                <label>
+                    Bild-URL
+                </label>
+
+                <input
+                    type="url"
+                    id="grammarImage"
+                    placeholder="Optional"
+                >
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 SAVE
+                 ================================================= -->
+
+            <section class="admin-save-area">
+
+                <button
+                    type="submit"
+                    class="admin-primary-button"
+                >
+                    💾 Inhalt speichern
+                </button>
+
+
+                <div
+                    id="saveMessage"
+                    class="admin-message"
+                ></div>
+
+            </section>
+
+
+        </form>
+
+
+        <div class="admin-help">
+
+            <strong>
+                💡 So funktioniert es
+            </strong>
+
+            <p>
+                Der Inhalt wird sofort in Supabase gespeichert.
+                Deine vorhandene Google-Sheets-Sicherung übernimmt
+                die Daten beim nächsten Backup.
+            </p>
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-inner">
+
+        <div>
+
+            <strong>
+                DeutschWelt
+            </strong>
+
+            <p>
+                Deutsch verstehen. Deutsch anwenden.
+            </p>
+
+        </div>
+
+        <div>
+
+            <p>
+                © 2026 DeutschWelt
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+<script src="admin.js"></script>
+
+
+</body>
+
+</html>
