@@ -4,11 +4,11 @@
 
 
 const ADMIN_SUPABASE_URL =
-    "YOUR_SUPABASE_PROJECT_URL";
+    "https://llxcyabptsbdtsdhkzkc.supabase.co";
 
 
 const ADMIN_SUPABASE_ANON_KEY =
-    "YOUR_PUBLIC_ANON_OR_PUBLISHABLE_KEY";
+    "sb_publishable_MKh0z87kMiDAQX3jnaoADQ_-D0_XXd4";
 
 
 let adminSupabase = null;
