@@ -5,60 +5,30 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="description"
-        content="DeutschWelt Wortschatz – deutsche Wörter nach A1, A2, B1 und B2 lernen und wiederholen."
-    >
+    <meta name="description"
+          content="DeutschWelt Wortschatz – deutsche Wörter nach Niveau lernen und wiederholen.">
 
-    <title>
-        Wortschatz – DeutschWelt
-    </title>
+    <title>Wortschatz – DeutschWelt</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
-
 <body>
-
 
 <header class="site-header">
 
     <div class="header-inner">
 
-
-        <a
-            href="index.html"
-            class="logo"
-            aria-label="DeutschWelt Startseite"
-        >
-
-            <span
-                class="logo-icon"
-                aria-hidden="true"
-            >
-                🇩🇪
-            </span>
-
-            <span>
-                DeutschWelt
-            </span>
-
+        <a href="index.html" class="logo">
+            <span class="logo-icon">🇩🇪</span>
+            <span>Deutsch<span class="logo-accent">Welt</span></span>
         </a>
 
-
-        <nav
-            class="main-nav"
-            aria-label="Hauptnavigation"
-        >
+        <nav class="main-nav">
 
             <a href="index.html">
                 Startseite
@@ -68,11 +38,7 @@
                 Lernwelten
             </a>
 
-            <a
-                href="wortschatz.html"
-                class="active"
-                aria-current="page"
-            >
+            <a href="wortschatz.html" class="active">
                 Wortschatz
             </a>
 
@@ -82,30 +48,36 @@
 
         </nav>
 
+        <a href="kontakt.html" class="header-contact">
+            Kontakt
+        </a>
 
     </div>
 
 </header>
 
 
+<main class="inner-page">
 
-<main class="learning-page">
+    <div class="back-home-wrapper">
+
+        <a href="index.html" class="back-home">
+            <span>←</span>
+            <span>🏠 Zur Startseite</span>
+        </a>
+
+    </div>
 
 
-    <section
-        class="level-header"
-        aria-labelledby="vocabularyTitle"
-    >
+    <section class="level-header">
 
         <span class="eyebrow">
-            DeutschWelt
+            DEUTSCHWELT
         </span>
 
-
-        <h1 id="vocabularyTitle">
+        <h1>
             Wortschatz
         </h1>
-
 
         <p>
             Wichtige deutsche Wörter nach Niveau
@@ -115,57 +87,36 @@
     </section>
 
 
+    <div class="level-filter">
 
-    <section
-        class="level-filter"
-        aria-label="Sprachniveau auswählen"
-    >
-
-        <button
-            type="button"
-            class="filter-level active"
-            data-vocab-level="A1"
-            aria-pressed="true"
-        >
+        <button class="filter-level active"
+                data-vocab-level="A1"
+                aria-pressed="true">
             A1
         </button>
 
-        <button
-            type="button"
-            class="filter-level"
-            data-vocab-level="A2"
-            aria-pressed="false"
-        >
+        <button class="filter-level"
+                data-vocab-level="A2"
+                aria-pressed="false">
             A2
         </button>
 
-        <button
-            type="button"
-            class="filter-level"
-            data-vocab-level="B1"
-            aria-pressed="false"
-        >
+        <button class="filter-level"
+                data-vocab-level="B1"
+                aria-pressed="false">
             B1
         </button>
 
-        <button
-            type="button"
-            class="filter-level"
-            data-vocab-level="B2"
-            aria-pressed="false"
-        >
+        <button class="filter-level"
+                data-vocab-level="B2"
+                aria-pressed="false">
             B2
         </button>
 
-    </section>
+    </div>
 
 
-
-    <section
-        id="vocabularyGrid"
-        aria-live="polite"
-        aria-label="Wortschatz"
-    >
+    <section id="vocabularyGrid">
 
         <div class="loading-message">
 
@@ -179,20 +130,18 @@
 
     </section>
 
-
 </main>
-
 
 
 <footer class="site-footer">
 
     <div class="footer-inner">
 
-        <div>
+        <div class="footer-brand">
 
-            <strong>
-                DeutschWelt
-            </strong>
+            <a href="index.html" class="footer-logo">
+                🇩🇪 DeutschWelt
+            </a>
 
             <p>
                 Deutsch verstehen. Deutsch anwenden.
@@ -200,13 +149,20 @@
 
         </div>
 
+        <div class="footer-navigation">
 
-        <div>
+            <a href="index.html">🏠 Startseite</a>
+            <a href="lernen.html?level=A1">📚 Lernwelten</a>
+            <a href="wortschatz.html">🔤 Wortschatz</a>
+            <a href="grammatik.html">✏️ Grammatik</a>
+            <a href="kontakt.html">✉️ Kontakt</a>
+            <a href="datenschutz.html">🔒 Datenschutz</a>
+            <a href="impressum.html">📄 Impressum</a>
 
-            <p>
-                © 2026 DeutschWelt
-            </p>
+        </div>
 
+        <div class="footer-bottom">
+            © 2026 DeutschWelt
         </div>
 
     </div>
@@ -214,10 +170,7 @@
 </footer>
 
 
-
 <script src="script.js"></script>
 
-
 </body>
-
 </html>
