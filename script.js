@@ -1,12 +1,6 @@
-/* ======================================================
-   DEUTSCHWELT
-   FINAL JAVASCRIPT
-====================================================== */
-
-
-/* ======================================================
-   SUPABASE
-====================================================== */
+/* =========================================================
+   DEUTSCHWELT – FINAL SCRIPT
+   ========================================================= */
 
 const SUPABASE_URL =
     "https://llxcyabptsbdtsdhkzkc.supabase.co";
@@ -15,20 +9,41 @@ const SUPABASE_ANON_KEY =
     "sb_publishable_MKh0z87kMiDAQX3jnaoADQ_-D0_XXd4";
 
 let supabaseClient = null;
-
 let currentTopics = [];
+let germanVoice = null;
 
 
-
-/* ======================================================
-   CONNECT SUPABASE
-====================================================== */
+/* =========================================================
+   SUPABASE
+   ========================================================= */
 
 async function connectSupabase() {
 
     if (!window.supabase) {
 
         await new Promise((resolve, reject) => {
+
+            const existing =
+                document.querySelector(
+                    'script[src*="supabase-js"]'
+                );
+
+            if (existing) {
+
+                existing.addEventListener(
+                    "load",
+                    resolve,
+                    { once: true }
+                );
+
+                existing.addEventListener(
+                    "error",
+                    reject,
+                    { once: true }
+                );
+
+                return;
+            }
 
             const script =
                 document.createElement("script");
@@ -37,13 +52,7 @@ async function connectSupabase() {
                 "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
             script.onload = resolve;
-
-            script.onerror = () =>
-                reject(
-                    new Error(
-                        "Die Supabase-Bibliothek konnte nicht geladen werden."
-                    )
-                );
+            script.onerror = reject;
 
             document.head.appendChild(script);
 
@@ -51,13 +60,11 @@ async function connectSupabase() {
 
     }
 
-
     if (!window.supabase) {
         throw new Error(
-            "Supabase ist nicht verfügbar."
+            "Supabase konnte nicht geladen werden."
         );
     }
-
 
     if (!supabaseClient) {
 
@@ -72,9 +79,9 @@ async function connectSupabase() {
 }
 
 
-/* ======================================================
-   HTML ESCAPE
-====================================================== */
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
 function escapeHTML(value) {
 
@@ -91,13 +98,8 @@ function escapeHTML(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
-
-/* ======================================================
-   ARRAY PARSER
-====================================================== */
 
 function parseArray(value) {
 
@@ -107,10 +109,6 @@ function parseArray(value) {
 
     if (Array.isArray(value)) {
         return value;
-    }
-
-    if (typeof value !== "string") {
-        return [];
     }
 
     try {
@@ -124,43 +122,63 @@ function parseArray(value) {
 
     } catch {
 
-        return value
-            .split(",")
-            .map(item => item.trim())
-            .filter(Boolean);
+        if (typeof value === "string") {
 
+            return value
+                .split(",")
+                .map(item => item.trim())
+                .filter(Boolean);
+
+        }
+
+        return [];
     }
-
 }
 
 
-/* ======================================================
-   AUDIO
-====================================================== */
+function getURLLevel() {
 
-let germanVoice = null;
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
+    const value =
+        (params.get("level") || "A1")
+        .toUpperCase()
+        .trim();
+
+    return [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+    ].includes(value)
+        ? value
+        : "A1";
+}
+
+
+/* =========================================================
+   GERMAN AUDIO
+   ========================================================= */
 
 function loadGermanVoice() {
 
-    if (
-        !("speechSynthesis" in window)
-    ) {
+    if (!("speechSynthesis" in window)) {
         return;
     }
 
     const voices =
-        window.speechSynthesis.getVoices();
+        speechSynthesis.getVoices();
 
     germanVoice =
         voices.find(
             voice =>
                 voice.lang &&
-                voice.lang
-                    .toLowerCase()
+                voice.lang.toLowerCase()
                     .startsWith("de")
         ) || null;
-
 }
 
 
@@ -168,29 +186,25 @@ if ("speechSynthesis" in window) {
 
     loadGermanVoice();
 
-    window.speechSynthesis.onvoiceschanged =
+    speechSynthesis.onvoiceschanged =
         loadGermanVoice;
-
 }
 
 
 function speakGerman(text) {
 
-    if (!text) {
-        return;
-    }
-
     if (
+        !text ||
         !("speechSynthesis" in window)
     ) {
         return;
     }
 
-    window.speechSynthesis.cancel();
+    speechSynthesis.cancel();
 
     const cleanText =
         String(text)
-            .replace(/🔊/g, "")
+            .replace(/<[^>]*>/g, "")
             .trim();
 
     const utterance =
@@ -206,10 +220,9 @@ function speakGerman(text) {
         utterance.voice = germanVoice;
     }
 
-    window.speechSynthesis.speak(
+    speechSynthesis.speak(
         utterance
     );
-
 }
 
 
@@ -223,19 +236,15 @@ function audioButton(
     }
 
     return `
-
         <button
             type="button"
             class="audio-button"
             title="${escapeHTML(label)}"
             aria-label="${escapeHTML(label)}"
-            data-audio-text="${escapeHTML(text)}"
-        >
+            data-audio-text="${escapeHTML(text)}">
             🔊
         </button>
-
     `;
-
 }
 
 
@@ -263,42 +272,9 @@ document.addEventListener(
 );
 
 
-/* ======================================================
-   LEVEL FROM URL
-====================================================== */
-
-function getURLLevel() {
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    let level =
-        (
-            params.get("level") ||
-            "A1"
-        ).toUpperCase();
-
-    if (
-        ![
-            "A1",
-            "A2",
-            "B1",
-            "B2"
-        ].includes(level)
-    ) {
-        level = "A1";
-    }
-
-    return level;
-
-}
-
-
-/* ======================================================
+/* =========================================================
    LEARNING PAGE
-====================================================== */
+   ========================================================= */
 
 async function loadLearningPage() {
 
@@ -315,7 +291,6 @@ async function loadLearningPage() {
     if (!navigation || !content) {
         return;
     }
-
 
     const level =
         getURLLevel();
@@ -355,14 +330,14 @@ async function loadLearningPage() {
     };
 
 
-    const eyebrow =
-        document.getElementById(
-            "levelEyebrow"
-        );
-
     const title =
         document.getElementById(
             "levelTitle"
+        );
+
+    const eyebrow =
+        document.getElementById(
+            "levelEyebrow"
         );
 
     const description =
@@ -371,14 +346,14 @@ async function loadLearningPage() {
         );
 
 
-    if (eyebrow) {
-        eyebrow.textContent =
-            `${level} · Lernstufe`;
-    }
-
     if (title) {
         title.textContent =
             titles[level];
+    }
+
+    if (eyebrow) {
+        eyebrow.textContent =
+            `${level} · Lernstufe`;
     }
 
     if (description) {
@@ -402,32 +377,12 @@ async function loadLearningPage() {
 
 
     navigation.innerHTML = `
-
         <div class="loading-message">
-
             <div class="loading-spinner"></div>
-
             <span>
                 Themen werden geladen ...
             </span>
-
         </div>
-
-    `;
-
-
-    content.innerHTML = `
-
-        <div class="loading-message">
-
-            <div class="loading-spinner"></div>
-
-            <span>
-                Inhalte werden geladen ...
-            </span>
-
-        </div>
-
     `;
 
 
@@ -474,9 +429,7 @@ async function loadLearningPage() {
         } else {
 
             content.innerHTML = `
-
                 <div class="welcome-content">
-
                     <div class="welcome-icon">
                         📚
                     </div>
@@ -490,35 +443,31 @@ async function loadLearningPage() {
                         sind momentan keine
                         veröffentlichten Themen vorhanden.
                     </p>
-
                 </div>
-
             `;
 
         }
 
-
     } catch (error) {
 
-        console.error(error);
-
+        console.error(
+            "Learning page error:",
+            error
+        );
 
         navigation.innerHTML = `
-
             <div class="error-message">
-
                 <strong>
-                    Themen konnten nicht geladen werden.
+                    Lerninhalte konnten nicht geladen werden.
                 </strong>
 
                 <p>
                     ${escapeHTML(
-                        error.message
+                        error.message ||
+                        "Unbekannter Fehler."
                     )}
                 </p>
-
             </div>
-
         `;
 
     }
@@ -526,9 +475,9 @@ async function loadLearningPage() {
 }
 
 
-/* ======================================================
+/* =========================================================
    TOPIC NAVIGATION
-====================================================== */
+   ========================================================= */
 
 function renderTopicNavigation() {
 
@@ -540,7 +489,6 @@ function renderTopicNavigation() {
     if (!navigation) {
         return;
     }
-
 
     navigation.innerHTML = "";
 
@@ -554,14 +502,11 @@ function renderTopicNavigation() {
             topic.category ||
             "Allgemein";
 
-
         if (!categories[category]) {
             categories[category] = [];
         }
 
-
-        categories[category]
-            .push(topic);
+        categories[category].push(topic);
 
     });
 
@@ -600,8 +545,7 @@ function renderTopicNavigation() {
                             "button"
                         );
 
-                    button.type =
-                        "button";
+                    button.type = "button";
 
                     button.className =
                         "topic-button";
@@ -624,7 +568,9 @@ function renderTopicNavigation() {
                             )}
                         </span>
 
-                        <span class="topic-nav-audio">
+                        <span
+                            class="topic-nav-audio"
+                            title="Titel anhören">
                             🔊
                         </span>
 
@@ -640,7 +586,6 @@ function renderTopicNavigation() {
                                     ".topic-nav-audio"
                                 );
 
-
                             if (audio) {
 
                                 event.preventDefault();
@@ -651,9 +596,7 @@ function renderTopicNavigation() {
                                 );
 
                                 return;
-
                             }
-
 
                             showTopic(
                                 topic.id
@@ -679,9 +622,9 @@ function renderTopicNavigation() {
 }
 
 
-/* ======================================================
-   SHOW ONE TOPIC
-====================================================== */
+/* =========================================================
+   SHOW TOPIC
+   ========================================================= */
 
 function showTopic(id) {
 
@@ -691,7 +634,6 @@ function showTopic(id) {
                 String(item.id) ===
                 String(id)
         );
-
 
     if (!topic) {
         return;
@@ -708,8 +650,7 @@ function showTopic(id) {
                 "active",
                 String(
                     button.dataset.topicId
-                ) ===
-                String(id)
+                ) === String(id)
             );
 
         });
@@ -720,23 +661,26 @@ function showTopic(id) {
             "topicContent"
         );
 
-
     if (!content) {
         return;
     }
 
 
     content.innerHTML =
-        buildTopicHTML(
-            topic
-        );
+        buildTopicHTML(topic);
+
+
+    content.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
 
 }
 
 
-/* ======================================================
-   TOPIC CONTENT
-====================================================== */
+/* =========================================================
+   TOPIC HTML
+   ========================================================= */
 
 function buildTopicHTML(topic) {
 
@@ -760,267 +704,215 @@ function buildTopicHTML(topic) {
 
         <article class="topic-article">
 
+            <div class="topic-title-row">
 
-            <header class="topic-article-header">
+                <div>
 
-                <div class="article-icon">
-                    ${escapeHTML(
-                        topic.icon || "📘"
-                    )}
-                </div>
-
-
-                <div class="topic-title-area">
-
-                    <span class="article-category">
-
+                    <div class="eyebrow">
                         ${escapeHTML(
-                            topic.category || ""
+                            topic.category ||
+                            "Lernwelt"
                         )}
+                    </div>
 
-                    </span>
-
-
-                    <h2>
-
+                    <h1 style="margin-top:12px;">
+                        ${escapeHTML(
+                            topic.icon || "📘"
+                        )}
                         ${escapeHTML(
                             topic.title || ""
                         )}
+                    </h1>
 
-                        ${audioButton(
-                            topic.title,
-                            "Thema anhören"
-                        )}
+                </div>
 
-                    </h2>
+                ${audioButton(
+                    topic.title,
+                    "Thema anhören"
+                )}
+
+            </div>
 
 
-                    ${
-                        topic.summary
-                        ?
-                        `
-                        <p class="article-summary">
-
+            ${
+                topic.summary
+                    ? `
+                        <p class="topic-summary">
                             ${escapeHTML(
                                 topic.summary
                             )}
-
                         </p>
-                        `
-                        :
-                        ""
-                    }
-
-                </div>
-
-            </header>
+                    `
+                    : ""
+            }
 
 
+            ${
+                topic.explanation
+                    ? `
+                        <section class="content-section">
 
-            <section
-                class="content-section first-section"
-            >
+                            <h3>
+                                📖 Erklärung
+                            </h3>
 
-                <h3>
-                    📖 Einfach erklärt
-                </h3>
+                            <p>
+                                ${escapeHTML(
+                                    topic.explanation
+                                )}
+                            </p>
 
-                <div class="explanation">
-
-                    ${escapeHTML(
-                        topic.explanation || ""
-                    ).replace(
-                        /\n/g,
-                        "<br>"
-                    )}
-
-                </div>
-
-            </section>
-
+                        </section>
+                    `
+                    : ""
+            }
 
 
             ${
                 points.length
-                ?
-                `
+                    ? `
+                        <section class="content-section">
 
-                <section class="content-section">
+                            <h3>
+                                ⭐ Wichtig
+                            </h3>
 
-                    <h3>
-                        ⭐ Wichtig
-                    </h3>
+                            <ul class="content-list">
 
-                    <ul class="content-list">
+                                ${points.map(
+                                    item => `
+                                        <li>
+                                            ${escapeHTML(item)}
+                                        </li>
+                                    `
+                                ).join("")}
 
-                        ${points.map(
-                            point => `
+                            </ul>
 
-                            <li>
-
-                                <span>
-                                    ${escapeHTML(
-                                        point
-                                    )}
-                                </span>
-
-                                ${audioButton(
-                                    point
-                                )}
-
-                            </li>
-
-                        `).join("")}
-
-                    </ul>
-
-                </section>
-
-                `
-                :
-                ""
+                        </section>
+                    `
+                    : ""
             }
-
 
 
             ${
                 patterns.length
-                ?
-                `
+                    ? `
+                        <section class="content-section">
 
-                <section class="content-section">
+                            <h3>
+                                🧩 Satzmuster
+                            </h3>
 
-                    <h3>
-                        🧩 Satzmuster
-                    </h3>
+                            <div class="pattern-list">
 
-                    <div class="pattern-list">
+                                ${patterns.map(
+                                    item => `
 
-                        ${patterns.map(
-                            pattern => `
+                                        <div class="pattern-box">
 
-                            <div class="pattern-box">
+                                            <span>
+                                                ${escapeHTML(item)}
+                                            </span>
 
-                                <span>
-                                    ${escapeHTML(
-                                        pattern
-                                    )}
-                                </span>
+                                            ${audioButton(
+                                                item,
+                                                "Satzmuster anhören"
+                                            )}
 
-                                ${audioButton(
-                                    pattern,
-                                    "Satzmuster anhören"
-                                )}
+                                        </div>
+
+                                    `
+                                ).join("")}
 
                             </div>
 
-                        `).join("")}
-
-                    </div>
-
-                </section>
-
-                `
-                :
-                ""
+                        </section>
+                    `
+                    : ""
             }
-
 
 
             ${
                 examples.length
-                ?
-                `
+                    ? `
+                        <section class="content-section">
 
-                <section class="content-section">
+                            <h3>
+                                💬 Beispiele
+                            </h3>
 
-                    <h3>
-                        💬 Beispiele
-                    </h3>
+                            <div class="example-list">
 
-                    <div class="example-list">
+                                ${examples.map(
+                                    item => `
 
-                        ${examples.map(
-                            example => `
+                                        <div class="example-box">
 
-                            <div class="example-box">
+                                            <span>
+                                                ${escapeHTML(item)}
+                                            </span>
 
-                                <span>
-                                    ${escapeHTML(
-                                        example
-                                    )}
-                                </span>
+                                            ${audioButton(
+                                                item,
+                                                "Beispiel anhören"
+                                            )}
 
-                                ${audioButton(
-                                    example,
-                                    "Beispiel anhören"
-                                )}
+                                        </div>
+
+                                    `
+                                ).join("")}
 
                             </div>
 
-                        `).join("")}
-
-                    </div>
-
-                </section>
-
-                `
-                :
-                ""
+                        </section>
+                    `
+                    : ""
             }
-
 
 
             ${
                 topic.merke
-                ?
-                `
+                    ? `
+                        <section class="merke-box">
 
-                <section class="merke-box">
+                            <div class="merke-icon">
+                                💡
+                            </div>
 
-                    <div class="merke-icon">
-                        💡
-                    </div>
+                            <div>
 
-                    <div>
+                                <strong>
+                                    Merke
+                                </strong>
 
-                        <strong>
-                            Merke
-                        </strong>
+                                <p>
+                                    ${escapeHTML(
+                                        topic.merke
+                                    )}
 
-                        <p>
+                                    ${audioButton(
+                                        topic.merke,
+                                        "Merksatz anhören"
+                                    )}
+                                </p>
 
-                            ${escapeHTML(
-                                topic.merke
-                            )}
+                            </div>
 
-                            ${audioButton(
-                                topic.merke,
-                                "Merksatz anhören"
-                            )}
-
-                        </p>
-
-                    </div>
-
-                </section>
-
-                `
-                :
-                ""
+                        </section>
+                    `
+                    : ""
             }
-
 
         </article>
 
     `;
-
 }
 
 
-/* ======================================================
+/* =========================================================
    VOCABULARY
-====================================================== */
+   ========================================================= */
 
 async function loadVocabulary(level) {
 
@@ -1035,7 +927,6 @@ async function loadVocabulary(level) {
 
 
     grid.innerHTML = `
-
         <div class="loading-message">
 
             <div class="loading-spinner"></div>
@@ -1045,7 +936,6 @@ async function loadVocabulary(level) {
             </span>
 
         </div>
-
     `;
 
 
@@ -1079,7 +969,6 @@ async function loadVocabulary(level) {
         if (!data || !data.length) {
 
             grid.innerHTML = `
-
                 <div class="welcome-content">
 
                     <div class="welcome-icon">
@@ -1092,16 +981,14 @@ async function loadVocabulary(level) {
 
                     <p>
                         Für ${escapeHTML(level)}
-                        wurden noch keine Wörter
-                        veröffentlicht.
+                        wurden noch keine
+                        veröffentlichten Wörter hinzugefügt.
                     </p>
 
                 </div>
-
             `;
 
             return;
-
         }
 
 
@@ -1114,57 +1001,47 @@ async function loadVocabulary(level) {
                 word.category ||
                 "Allgemein";
 
-
             if (!categories[category]) {
                 categories[category] = [];
             }
 
-
-            categories[category]
-                .push(word);
+            categories[category].push(word);
 
         });
 
 
         grid.innerHTML = `
 
-            <div>
+            <div class="vocabulary-page-content">
 
-                ${
-                    Object.keys(categories)
-                        .map(
-                            category => `
+                ${Object.keys(categories)
+                    .map(
+                        category => `
 
-                            <section
-                                class="vocabulary-category"
-                            >
+                            <section class="vocabulary-category">
 
                                 <h2>
-                                    ${escapeHTML(
-                                        category
-                                    )}
+                                    ${escapeHTML(category)}
                                 </h2>
 
-                                <div
-                                    class="vocabulary-grid"
-                                >
+                                <div class="vocabulary-grid">
 
-                                    ${
-                                        categories[category]
-                                            .map(
-                                                buildVocabularyCard
-                                            )
-                                            .join("")
-                                    }
+                                    ${categories[category]
+                                        .map(
+                                            word =>
+                                                buildVocabularyCard(
+                                                    word
+                                                )
+                                        )
+                                        .join("")}
 
                                 </div>
 
                             </section>
 
                         `
-                        )
-                        .join("")
-                }
+                    )
+                    .join("")}
 
             </div>
 
@@ -1174,9 +1051,7 @@ async function loadVocabulary(level) {
 
         console.error(error);
 
-
         grid.innerHTML = `
-
             <div class="error-message">
 
                 <strong>
@@ -1185,12 +1060,12 @@ async function loadVocabulary(level) {
 
                 <p>
                     ${escapeHTML(
-                        error.message
+                        error.message ||
+                        "Unbekannter Fehler."
                     )}
                 </p>
 
             </div>
-
         `;
 
     }
@@ -1198,126 +1073,109 @@ async function loadVocabulary(level) {
 }
 
 
-/* ======================================================
+/* =========================================================
    VOCABULARY CARD
-====================================================== */
+   ========================================================= */
 
 function buildVocabularyCard(word) {
 
-    const fullWord =
-        `${word.article || ""} ${word.word || ""}`
-            .trim();
+    const article =
+        word.article
+            ? `<span class="vocabulary-article">
+                ${escapeHTML(word.article)}
+               </span>`
+            : "";
 
 
     return `
 
         <article class="vocabulary-card">
 
-            <div class="vocabulary-word">
-
-                ${
-                    word.article
-                    ?
-                    `
-                    <span class="vocabulary-article">
-                        ${escapeHTML(
-                            word.article
-                        )}
-                    </span>
-                    `
-                    :
-                    ""
-                }
+            <span class="article-category">
+                ${escapeHTML(
+                    word.category ||
+                    "Wort"
+                )}
+            </span>
 
 
-                <strong>
+            <h3>
+
+                <span>
+                    ${article}
                     ${escapeHTML(
                         word.word || ""
                     )}
-                </strong>
-
+                </span>
 
                 ${audioButton(
-                    fullWord,
+                    word.word,
                     "Wort anhören"
                 )}
 
-            </div>
+            </h3>
 
 
             ${
                 word.plural
-                ?
-                `
-                <div class="vocabulary-plural">
-
-                    <span>
-                        Plural:
-                        ${escapeHTML(
-                            word.plural
-                        )}
-                    </span>
-
-                    ${audioButton(
-                        word.plural,
-                        "Plural anhören"
-                    )}
-
-                </div>
-                `
-                :
-                ""
+                    ? `
+                        <div class="vocabulary-plural">
+                            Plural:
+                            ${escapeHTML(
+                                word.plural
+                            )}
+                        </div>
+                    `
+                    : ""
             }
 
 
-            <div class="vocabulary-meaning">
-
-                ${escapeHTML(
-                    word.meaning || ""
-                )}
-
-            </div>
+            ${
+                word.meaning
+                    ? `
+                        <div class="vocabulary-meaning">
+                            ${escapeHTML(
+                                word.meaning
+                            )}
+                        </div>
+                    `
+                    : ""
+            }
 
 
             ${
                 word.example
-                ?
-                `
-                <div class="vocabulary-example">
+                    ? `
+                        <div class="vocabulary-example">
 
-                    <span>
-                        ${escapeHTML(
-                            word.example
-                        )}
-                    </span>
+                            <span>
+                                ${escapeHTML(
+                                    word.example
+                                )}
+                            </span>
 
-                    ${audioButton(
-                        word.example,
-                        "Beispielsatz anhören"
-                    )}
+                            ${audioButton(
+                                word.example,
+                                "Beispielsatz anhören"
+                            )}
 
-                </div>
-                `
-                :
-                ""
+                        </div>
+                    `
+                    : ""
             }
 
 
             ${
                 word.note
-                ?
-                `
-                <div class="vocabulary-note">
-
-                    💡
-                    ${escapeHTML(
-                        word.note
-                    )}
-
-                </div>
-                `
-                :
-                ""
+                    ? `
+                        <div class="vocabulary-note">
+                            💡
+                            ${escapeHTML(
+                                word.note
+                            )}
+                        </div>
+                    `
+                    : ""
             }
 
         </article>
@@ -1327,9 +1185,9 @@ function buildVocabularyCard(word) {
 }
 
 
-/* ======================================================
+/* =========================================================
    GRAMMAR
-====================================================== */
+   ========================================================= */
 
 async function loadGrammar(level) {
 
@@ -1344,7 +1202,6 @@ async function loadGrammar(level) {
 
 
     grid.innerHTML = `
-
         <div class="loading-message">
 
             <div class="loading-spinner"></div>
@@ -1354,7 +1211,6 @@ async function loadGrammar(level) {
             </span>
 
         </div>
-
     `;
 
 
@@ -1388,7 +1244,6 @@ async function loadGrammar(level) {
         if (!data || !data.length) {
 
             grid.innerHTML = `
-
                 <div class="welcome-content">
 
                     <div class="welcome-icon">
@@ -1402,15 +1257,14 @@ async function loadGrammar(level) {
                     <p>
                         Für ${escapeHTML(level)}
                         wurden noch keine
-                        Grammatikthemen veröffentlicht.
+                        veröffentlichten Grammatikthemen
+                        hinzugefügt.
                     </p>
 
                 </div>
-
             `;
 
             return;
-
         }
 
 
@@ -1418,13 +1272,12 @@ async function loadGrammar(level) {
 
             <div class="grammar-grid">
 
-                ${
-                    data
-                        .map(
-                            buildGrammarCard
-                        )
-                        .join("")
-                }
+                ${data
+                    .map(
+                        item =>
+                            buildGrammarCard(item)
+                    )
+                    .join("")}
 
             </div>
 
@@ -1434,9 +1287,7 @@ async function loadGrammar(level) {
 
         console.error(error);
 
-
         grid.innerHTML = `
-
             <div class="error-message">
 
                 <strong>
@@ -1445,12 +1296,12 @@ async function loadGrammar(level) {
 
                 <p>
                     ${escapeHTML(
-                        error.message
+                        error.message ||
+                        "Unbekannter Fehler."
                     )}
                 </p>
 
             </div>
-
         `;
 
     }
@@ -1458,9 +1309,9 @@ async function loadGrammar(level) {
 }
 
 
-/* ======================================================
+/* =========================================================
    GRAMMAR CARD
-====================================================== */
+   ========================================================= */
 
 function buildGrammarCard(item) {
 
@@ -1491,9 +1342,11 @@ function buildGrammarCard(item) {
 
             <h2>
 
-                ${escapeHTML(
-                    item.title || ""
-                )}
+                <span>
+                    ${escapeHTML(
+                        item.title || ""
+                    )}
+                </span>
 
                 ${audioButton(
                     item.title,
@@ -1505,205 +1358,124 @@ function buildGrammarCard(item) {
 
             ${
                 item.short_explanation
-                ?
-                `
-                <p class="grammar-short">
-
-                    ${escapeHTML(
-                        item.short_explanation
-                    )}
-
-                </p>
-                `
-                :
-                ""
+                    ? `
+                        <p class="grammar-short">
+                            ${escapeHTML(
+                                item.short_explanation
+                            )}
+                        </p>
+                    `
+                    : ""
             }
 
 
             ${
                 item.rule_preview
-                ?
-                `
-                <div class="grammar-rule">
+                    ? `
+                        <div class="grammar-rule">
 
-                    <span>
+                            <span>
+                                ${escapeHTML(
+                                    item.rule_preview
+                                )}
+                            </span>
 
-                        ${escapeHTML(
-                            item.rule_preview
-                        )}
+                            ${audioButton(
+                                item.rule_preview,
+                                "Regel anhören"
+                            )}
 
-                    </span>
-
-                    ${audioButton(
-                        item.rule_preview,
-                        "Regel anhören"
-                    )}
-
-                </div>
-                `
-                :
-                ""
+                        </div>
+                    `
+                    : ""
             }
 
 
             ${
                 item.explanation
-                ?
-                `
-                <p class="grammar-explanation">
-
-                    ${escapeHTML(
-                        item.explanation
-                    )}
-
-                </p>
-                `
-                :
-                ""
+                    ? `
+                        <p class="grammar-explanation">
+                            ${escapeHTML(
+                                item.explanation
+                            )}
+                        </p>
+                    `
+                    : ""
             }
 
 
             ${
                 points.length
-                ?
-                `
-                <h3>
-                    ⭐ Wichtig
-                </h3>
+                    ? `
+                        <h3>
+                            ⭐ Wichtig
+                        </h3>
 
-                <ul class="content-list">
+                        <ul>
 
-                    ${points.map(
-                        point => `
+                            ${points.map(
+                                point => `
+                                    <li>
+                                        ${escapeHTML(point)}
+                                    </li>
+                                `
+                            ).join("")}
 
-                        <li>
-
-                            <span>
-                                ${escapeHTML(
-                                    point
-                                )}
-                            </span>
-
-                            ${audioButton(
-                                point
-                            )}
-
-                        </li>
-
-                    `).join("")}
-
-                </ul>
-                `
-                :
-                ""
+                        </ul>
+                    `
+                    : ""
             }
 
 
             ${
                 patterns.length
-                ?
-                `
-                <h3>
-                    🧩 Satzmuster
-                </h3>
+                    ? `
+                        <h3>
+                            🧩 Satzmuster
+                        </h3>
 
-                <div class="pattern-list">
+                        ${patterns.map(
+                            pattern => `
+                                <div class="grammar-example">
 
-                    ${patterns.map(
-                        pattern => `
+                                    ${escapeHTML(pattern)}
 
-                        <div class="pattern-box">
+                                    ${audioButton(
+                                        pattern,
+                                        "Satzmuster anhören"
+                                    )}
 
-                            <span>
-                                ${escapeHTML(
-                                    pattern
-                                )}
-                            </span>
-
-                            ${audioButton(
-                                pattern
-                            )}
-
-                        </div>
-
-                    `).join("")}
-
-                </div>
-                `
-                :
-                ""
+                                </div>
+                            `
+                        ).join("")}
+                    `
+                    : ""
             }
 
 
             ${
                 examples.length
-                ?
-                `
-                <h3>
-                    💬 Beispiele
-                </h3>
+                    ? `
+                        <h3>
+                            💬 Beispiele
+                        </h3>
 
-                <div class="example-list">
+                        ${examples.map(
+                            example => `
+                                <div class="grammar-example">
 
-                    ${examples.map(
-                        example => `
+                                    ${escapeHTML(example)}
 
-                        <div class="example-box">
+                                    ${audioButton(
+                                        example,
+                                        "Beispiel anhören"
+                                    )}
 
-                            <span>
-                                ${escapeHTML(
-                                    example
-                                )}
-                            </span>
-
-                            ${audioButton(
-                                example
-                            )}
-
-                        </div>
-
-                    `).join("")}
-
-                </div>
-                `
-                :
-                ""
-            }
-
-
-            ${
-                item.merke
-                ?
-                `
-                <div class="merke-box">
-
-                    <div class="merke-icon">
-                        💡
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Merke
-                        </strong>
-
-                        <p>
-                            ${escapeHTML(
-                                item.merke
-                            )}
-
-                            ${audioButton(
-                                item.merke
-                            )}
-
-                        </p>
-
-                    </div>
-
-                </div>
-                `
-                :
-                ""
+                                </div>
+                            `
+                        ).join("")}
+                    `
+                    : ""
             }
 
         </article>
@@ -1713,136 +1485,145 @@ function buildGrammarCard(item) {
 }
 
 
-/* ======================================================
+/* =========================================================
    LEVEL BUTTONS
-====================================================== */
+   ========================================================= */
 
-function setupLevelButtons(
-    selector,
-    callback,
-    datasetName
-) {
+function setupLevelButtons() {
 
-    const buttons =
-        document.querySelectorAll(
-            selector
-        );
+    document
+        .querySelectorAll(
+            "[data-vocab-level]"
+        )
+        .forEach(button => {
 
+            button.addEventListener(
+                "click",
+                () => {
 
-    buttons.forEach(button => {
+                    document
+                        .querySelectorAll(
+                            "[data-vocab-level]"
+                        )
+                        .forEach(item => {
 
-        button.addEventListener(
-            "click",
-            async () => {
+                            item.classList.remove(
+                                "active"
+                            );
 
-                buttons.forEach(
-                    other => {
+                            item.setAttribute(
+                                "aria-pressed",
+                                "false"
+                            );
 
-                        other.classList.remove(
-                            "active"
-                        );
-
-                        other.setAttribute(
-                            "aria-pressed",
-                            "false"
-                        );
-
-                    }
-                );
+                        });
 
 
-                button.classList.add(
-                    "active"
-                );
+                    button.classList.add(
+                        "active"
+                    );
 
-                button.setAttribute(
-                    "aria-pressed",
-                    "true"
-                );
-
-
-                await callback(
-                    button.dataset[
-                        datasetName
-                    ]
-                );
-
-            }
-        );
-
-    });
+                    button.setAttribute(
+                        "aria-pressed",
+                        "true"
+                    );
 
 
-    return buttons;
+                    loadVocabulary(
+                        button.dataset.vocabLevel
+                    );
+
+                }
+            );
+
+        });
+
+
+    document
+        .querySelectorAll(
+            "[data-grammar-level]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            "[data-grammar-level]"
+                        )
+                        .forEach(item => {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                            item.setAttribute(
+                                "aria-pressed",
+                                "false"
+                            );
+
+                        });
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    button.setAttribute(
+                        "aria-pressed",
+                        "true"
+                    );
+
+
+                    loadGrammar(
+                        button.dataset.grammarLevel
+                    );
+
+                }
+            );
+
+        });
 
 }
 
 
-/* ======================================================
-   INITIALIZE
-====================================================== */
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    async () => {
+    () => {
 
-        try {
+        loadLearningPage();
 
-            if (
-                document.getElementById(
-                    "topicNavigation"
-                )
-            ) {
+        setupLevelButtons();
 
-                await loadLearningPage();
+        const vocabButton =
+            document.querySelector(
+                "[data-vocab-level].active"
+            );
 
-            }
+        if (vocabButton) {
 
+            loadVocabulary(
+                vocabButton.dataset.vocabLevel
+            );
 
-            if (
-                document.getElementById(
-                    "vocabularyGrid"
-                )
-            ) {
-
-                setupLevelButtons(
-                    "[data-vocab-level]",
-                    loadVocabulary,
-                    "vocabLevel"
-                );
+        }
 
 
-                await loadVocabulary(
-                    "A1"
-                );
+        const grammarButton =
+            document.querySelector(
+                "[data-grammar-level].active"
+            );
 
-            }
+        if (grammarButton) {
 
-
-            if (
-                document.getElementById(
-                    "grammarGrid"
-                )
-            ) {
-
-                setupLevelButtons(
-                    "[data-grammar-level]",
-                    loadGrammar,
-                    "grammarLevel"
-                );
-
-
-                await loadGrammar(
-                    "A1"
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "DeutschWelt:",
-                error
+            loadGrammar(
+                grammarButton.dataset.grammarLevel
             );
 
         }
