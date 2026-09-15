@@ -28,7 +28,7 @@
             <span>Deutsch<span class="logo-accent">Welt</span></span>
         </a>
 
-        <nav class="main-nav">
+        <nav class="main-nav" aria-label="Hauptnavigation">
 
             <a href="index.html">
                 Startseite
@@ -59,6 +59,8 @@
 
 <main class="info-page">
 
+    <!-- Zur Startseite -->
+
     <div class="back-home-wrapper">
 
         <a href="index.html" class="back-home">
@@ -68,6 +70,8 @@
 
     </div>
 
+
+    <!-- Kontaktkarte -->
 
     <article class="info-card">
 
@@ -91,82 +95,80 @@
 
         <div class="info-content">
 
-            <h2>Schreib uns</h2>
+            <h2>
+                Schreib uns direkt
+            </h2>
 
             <p>
-                Du kannst uns direkt per E-Mail erreichen:
+                Wenn du Fragen, Feedback oder Vorschläge
+                zu DeutschWelt hast, kannst du uns direkt
+                per E-Mail kontaktieren.
             </p>
 
-            <p>
-                <a href="mailto:jellaswathi26@gmail.com">
+
+            <div style="
+                margin: 30px 0;
+                padding: 28px;
+                border-radius: 18px;
+                background: #f8fafc;
+                border: 1px solid #e5eaf2;
+                text-align: center;
+            ">
+
+                <div style="
+                    font-size: 34px;
+                    margin-bottom: 10px;
+                ">
+                    📧
+                </div>
+
+                <p style="
+                    margin-bottom: 10px;
+                    color: #64748b;
+                    font-size: 13px;
+                    font-weight: 700;
+                ">
+                    E-Mail
+                </p>
+
+                <a
+                    href="mailto:jellaswathi26@gmail.com"
+                    style="
+                        font-size: 18px;
+                        font-weight: 800;
+                    ">
                     jellaswathi26@gmail.com
                 </a>
+
+                <div style="margin-top: 20px;">
+
+                    <a
+                        href="mailto:jellaswathi26@gmail.com"
+                        class="btn btn-primary">
+
+                        ✉️ E-Mail schreiben
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <h2>
+                Feedback ist willkommen
+            </h2>
+
+            <p>
+                Wenn du einen Fehler findest, eine Idee für
+                neue Lerninhalte hast oder uns einfach dein
+                Feedback geben möchtest, schreib uns gerne.
             </p>
 
-
-            <h2>Nachricht senden</h2>
-
-            <form class="contact-form"
-                  action="mailto:jellaswathi26@gmail.com"
-                  method="post"
-                  enctype="text/plain">
-
-                <div class="form-group">
-
-                    <label for="name">
-                        Name
-                    </label>
-
-                    <input
-                        id="name"
-                        name="Name"
-                        type="text"
-                        placeholder="Dein Name"
-                        required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="email">
-                        E-Mail
-                    </label>
-
-                    <input
-                        id="email"
-                        name="E-Mail"
-                        type="email"
-                        placeholder="deine@email.de"
-                        required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="message">
-                        Nachricht
-                    </label>
-
-                    <textarea
-                        id="message"
-                        name="Nachricht"
-                        placeholder="Deine Nachricht ..."
-                        required></textarea>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="contact-submit">
-
-                    ✉️ Nachricht senden
-
-                </button>
-
-            </form>
+            <p>
+                Wir freuen uns über jede Nachricht, die dabei
+                hilft, DeutschWelt weiter zu verbessern.
+            </p>
 
         </div>
 
@@ -195,18 +197,36 @@
         <div class="footer-navigation">
 
             <a href="index.html">🏠 Startseite</a>
-            <a href="lernen.html?level=A1">📚 Lernwelten</a>
-            <a href="wortschatz.html">🔤 Wortschatz</a>
-            <a href="grammatik.html">✏️ Grammatik</a>
-            <a href="kontakt.html">✉️ Kontakt</a>
-            <a href="datenschutz.html">🔒 Datenschutz</a>
-            <a href="impressum.html">📄 Impressum</a>
+
+            <a href="lernen.html?level=A1">
+                📚 Lernwelten
+            </a>
+
+            <a href="wortschatz.html">
+                🔤 Wortschatz
+            </a>
+
+            <a href="grammatik.html">
+                ✏️ Grammatik
+            </a>
+
+            <a href="kontakt.html">
+                ✉️ Kontakt
+            </a>
+
+            <a href="datenschutz.html">
+                🔒 Datenschutz
+            </a>
+
+            <a href="impressum.html">
+                📄 Impressum
+            </a>
 
         </div>
 
 
         <div class="footer-bottom">
-            © 2026 DeutschWelt
+            © 2026 DeutschWelt · Alle Rechte vorbehalten.
         </div>
 
     </div>
