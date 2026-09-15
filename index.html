@@ -2,321 +2,227 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>DeutschWelt – Deutsch lernen</title>
+    <title>Deutsch lernen kostenlos – A1 bis B2 | DeutschWelt</title>
+
+    <meta
+        name="description"
+        content="Deutsch kostenlos lernen von A1 bis B2. Einfache Erklärungen, Grammatik, Wortschatz und wichtige Alltagsthemen für Deutschlernende."
+    >
+
+    <meta
+        name="keywords"
+        content="Deutsch lernen, Deutsch A1, Deutsch A2, Deutsch B1, Deutsch B2, deutsche Grammatik, deutscher Wortschatz"
+    >
+
+    <meta name="author" content="DeutschWelt">
+
+    <link
+        rel="canonical"
+        href="https://swathi26-jella.github.io/Deutsch_Welt/index.html"
+    >
+
+    <meta property="og:type" content="website">
+
+    <meta
+        property="og:title"
+        content="Deutsch lernen kostenlos – A1 bis B2 | DeutschWelt"
+    >
+
+    <meta
+        property="og:description"
+        content="Lerne Deutsch Schritt für Schritt mit einfachen Erklärungen, Grammatik und Wortschatz."
+    >
+
+    <meta
+        property="og:url"
+        content="https://swathi26-jella.github.io/Deutsch_Welt/index.html"
+    >
+
+    <meta property="og:site_name" content="DeutschWelt">
 
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "DeutschWelt",
+        "url": "https://swathi26-jella.github.io/Deutsch_Welt/",
+        "description": "Kostenlose Lernplattform für Deutsch von A1 bis B2 mit Grammatik und Wortschatz."
+    }
+    </script>
 </head>
 
 <body>
 
 <header class="site-header">
+    <div class="container header-inner">
 
-    <div class="header-inner">
-
-        <a href="index.html" class="logo">
-            <span class="logo-icon">🇩🇪</span>
-            <span>DeutschWelt</span>
+        <a class="site-logo" href="index.html">
+            DeutschWelt
         </a>
 
-        <nav class="main-nav">
-            <a href="index.html" class="active">Startseite</a>
+        <nav class="main-nav" aria-label="Hauptnavigation">
+            <a href="index.html">Startseite</a>
             <a href="lernen.html?level=A1">Lernwelten</a>
             <a href="wortschatz.html">Wortschatz</a>
             <a href="grammatik.html">Grammatik</a>
         </nav>
 
     </div>
-
 </header>
-
 
 <main>
 
-    <section class="home-hero">
+    <section class="hero-section">
+        <div class="container">
 
-        <div class="hero-text">
+            <p class="eyebrow">Deutsch lernen von Anfang an</p>
 
-            <span class="hero-label">
-                Deutsch lernen – Schritt für Schritt
-            </span>
+            <h1>Deutsch lernen. Verstehen. Wiederholen.</h1>
 
-            <h1>
-                Deutsch lernen.<br>
-                Verstehen. Wiederholen.
-            </h1>
-
-            <p>
-                Lerne Deutsch von Grund auf mit
-                verständlichen Erklärungen, Wortschatz
-                und Grammatik.
+            <p class="hero-text">
+                Lerne Deutsch von A1 bis B2 mit einfachen Erklärungen,
+                wichtigen Wörtern und verständlicher Grammatik.
             </p>
 
-        </div>
+            <div class="hero-actions">
+                <a class="primary-button" href="#levels">
+                    Lernstufe wählen
+                </a>
 
-
-        <div class="hero-visual">
-
-            <div class="sun"></div>
-
-            <div class="cloud cloud-1"></div>
-            <div class="cloud cloud-2"></div>
-
-            <div class="book-illustration">
-                <div class="book-page"></div>
-                <div class="book-page"></div>
-            </div>
-
-            <div class="speech-bubble bubble-1">
-                Hallo!
-            </div>
-
-            <div class="speech-bubble bubble-2">
-                Guten Tag!
+                <a class="secondary-button" href="grammatik.html">
+                    Grammatik entdecken
+                </a>
             </div>
 
         </div>
-
     </section>
 
+    <section id="levels" class="levels-section">
+        <div class="container">
 
-    <!-- ONLY A1 A2 B1 B2 ON HOME -->
+            <h2>Wo möchtest du starten?</h2>
 
-    <section class="level-selection">
-
-        <div class="section-heading">
-
-            <span class="eyebrow">
-                Lernstufe wählen
-            </span>
-
-            <h2>
-                Wo möchtest du starten?
-            </h2>
-
-            <p>
-                Wähle dein Deutschniveau.
+            <p class="section-introduction">
+                Wähle dein Deutschniveau und lerne Schritt für Schritt.
             </p>
 
-        </div>
+            <div class="level-grid">
 
-
-        <div class="level-home-grid">
-
-
-            <a
-                href="lernen.html?level=A1"
-                class="home-level-card level-a1"
-            >
-
-                <div class="level-card-icon">
-                    🌱
-                </div>
-
-                <div>
-
-                    <span class="level-small">
-                        Anfänger
-                    </span>
-
-                    <h3>
-                        A1
-                    </h3>
-
+                <a class="level-card" href="lernen.html?level=A1">
+                    <span class="level-label">Anfänger</span>
+                    <strong>A1</strong>
+                    <h3>Deutsch von Anfang an</h3>
                     <p>
-                        Deutsch von Anfang an
+                        Alphabet, Zahlen, Begrüßung, Familie,
+                        Alltag und erste Grammatik.
                     </p>
+                    <span class="card-link">A1 starten →</span>
+                </a>
 
-                </div>
-
-                <span class="level-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="lernen.html?level=A2"
-                class="home-level-card level-a2"
-            >
-
-                <div class="level-card-icon">
-                    🌿
-                </div>
-
-                <div>
-
-                    <span class="level-small">
-                        Grundkenntnisse
-                    </span>
-
-                    <h3>
-                        A2
-                    </h3>
-
+                <a class="level-card" href="lernen.html?level=A2">
+                    <span class="level-label">Grundkenntnisse</span>
+                    <strong>A2</strong>
+                    <h3>Deutsch im Alltag</h3>
                     <p>
-                        Deutsch im Alltag
+                        Reisen, Gesundheit, Wohnen, Arbeit,
+                        Perfekt und wichtige Nebensätze.
                     </p>
+                    <span class="card-link">A2 starten →</span>
+                </a>
 
-                </div>
-
-                <span class="level-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="lernen.html?level=B1"
-                class="home-level-card level-b1"
-            >
-
-                <div class="level-card-icon">
-                    🌳
-                </div>
-
-                <div>
-
-                    <span class="level-small">
-                        Mittelstufe
-                    </span>
-
-                    <h3>
-                        B1
-                    </h3>
-
+                <a class="level-card" href="lernen.html?level=B1">
+                    <span class="level-label">Selbstständig</span>
+                    <strong>B1</strong>
+                    <h3>Deutsch selbstständig benutzen</h3>
                     <p>
-                        Selbstständig Deutsch
+                        Meinungen, Erfahrungen, Bewerbung,
+                        Arbeit, Umwelt und B1-Grammatik.
                     </p>
+                    <span class="card-link">B1 starten →</span>
+                </a>
 
-                </div>
-
-                <span class="level-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="lernen.html?level=B2"
-                class="home-level-card level-b2"
-            >
-
-                <div class="level-card-icon">
-                    🚀
-                </div>
-
-                <div>
-
-                    <span class="level-small">
-                        Fortgeschritten
-                    </span>
-
-                    <h3>
-                        B2
-                    </h3>
-
+                <a class="level-card" href="lernen.html?level=B2">
+                    <span class="level-label">Fortgeschritten</span>
+                    <strong>B2</strong>
+                    <h3>Deutsch sicher und präzise</h3>
                     <p>
-                        Deutsch sicher anwenden
+                        Argumentation, berufliche Kommunikation,
+                        komplexe Grammatik und anspruchsvolle Themen.
                     </p>
+                    <span class="card-link">B2 starten →</span>
+                </a>
 
-                </div>
-
-                <span class="level-arrow">
-                    →
-                </span>
-
-            </a>
-
+            </div>
 
         </div>
-
     </section>
 
+    <section class="feature-section">
+        <div class="container">
 
-    <section class="home-info">
+            <h2>Was findest du auf DeutschWelt?</h2>
 
-        <div class="info-card">
+            <div class="feature-grid">
 
-            <div class="info-icon">
-                📚
+                <article class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Lernwelten</h3>
+                    <p>
+                        Lerne wichtige Themen nach deinem Deutschniveau.
+                        Jede Lernwelt enthält einfache Erklärungen und Beispiele.
+                    </p>
+                    <a href="lernen.html?level=A1">Lernwelten öffnen →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">🗣️</div>
+                    <h3>Wortschatz</h3>
+                    <p>
+                        Wiederhole wichtige deutsche Wörter nach Niveau
+                        und Thema – mit Bedeutung und Beispielen.
+                    </p>
+                    <a href="wortschatz.html">Wortschatz öffnen →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">🧩</div>
+                    <h3>Grammatik</h3>
+                    <p>
+                        Verstehe deutsche Grammatik mit einfachen Regeln,
+                        Satzmustern und verständlichen Beispielen.
+                    </p>
+                    <a href="grammatik.html">Grammatik öffnen →</a>
+                </article>
+
             </div>
 
-            <h3>
-                Lernwelten
-            </h3>
-
-            <p>
-                A1 bis B2 mit übersichtlichen
-                Themen und Erklärungen.
-            </p>
-
         </div>
-
-
-        <div class="info-card">
-
-            <div class="info-icon">
-                🗣️
-            </div>
-
-            <h3>
-                Wortschatz
-            </h3>
-
-            <p>
-                Wichtige Wörter nach Niveau
-                und Thema.
-            </p>
-
-        </div>
-
-
-        <div class="info-card">
-
-            <div class="info-icon">
-                🧩
-            </div>
-
-            <h3>
-                Grammatik
-            </h3>
-
-            <p>
-                Grammatik einfach und
-                verständlich erklärt.
-            </p>
-
-        </div>
-
     </section>
 
 </main>
 
-
 <footer class="site-footer">
+    <div class="container footer-inner">
 
-    <div class="footer-inner">
+        <p>
+            © 2026 DeutschWelt. Deutsch verstehen. Deutsch anwenden.
+        </p>
 
-        <div>
-            <strong>DeutschWelt</strong>
-            <p>
-                Deutsch verstehen. Deutsch anwenden.
-            </p>
-        </div>
-
-        <div>
-            <p>
-                © 2026 DeutschWelt
-            </p>
-        </div>
+        <nav aria-label="Footer-Navigation">
+            <a href="ueber-deutschwelt.html">Über DeutschWelt</a>
+            <a href="kontakt.html">Kontakt</a>
+            <a href="datenschutz.html">Datenschutz</a>
+            <a href="impressum.html">Impressum</a>
+        </nav>
 
     </div>
-
 </footer>
 
 </body>
