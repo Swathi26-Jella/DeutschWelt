@@ -9,28 +9,16 @@
     <title>DeutschWelt – Deutsch lernen von A1 bis B2</title>
 
     <meta name="description"
-        content="DeutschWelt hilft dir, Deutsch von A1 bis B2 einfach und verständlich zu lernen. Entdecke Lernwelten, Wortschatz und Grammatik.">
-
-    <meta name="keywords"
-        content="Deutsch lernen, Deutsch A1, Deutsch A2, Deutsch B1, Deutsch B2, deutsche Grammatik, deutscher Wortschatz">
-
-    <meta name="author" content="DeutschWelt">
+        content="DeutschWelt: Lerne Deutsch einfach und verständlich von A1 bis B2 mit Lernwelten, Wortschatz und Grammatik.">
 
     <link rel="canonical"
         href="https://swathi26-jella.github.io/Deutsch_Welt/index.html">
-
-    <meta property="og:title" content="DeutschWelt – Deutsch lernen">
-    <meta property="og:description"
-        content="Deutsch einfach verstehen und Schritt für Schritt lernen.">
-    <meta property="og:type" content="website">
-    <meta property="og:url"
-        content="https://swathi26-jella.github.io/Deutsch_Welt/index.html">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
@@ -38,624 +26,136 @@
 
 <body>
 
-    <!-- HEADER -->
+    <header class="simple-header">
 
-    <header class="site-header">
-        <div class="container header-inner">
+        <div class="simple-header-inner">
 
-            <a href="index.html" class="brand">
-                <span class="brand-symbol">🌍</span>
-
-                <span>
-                    <strong>Deutsch</strong><span class="brand-highlight">Welt</span>
-                </span>
+            <a href="index.html" class="simple-logo">
+                <span>🌍</span>
+                Deutsch<span>Welt</span>
             </a>
 
-            <nav class="main-nav" aria-label="Hauptnavigation">
-                <a href="index.html" class="active">Startseite</a>
+            <nav class="simple-nav">
                 <a href="lernen.html?level=A1">Lernwelten</a>
                 <a href="wortschatz.html">Wortschatz</a>
                 <a href="grammatik.html">Grammatik</a>
             </nav>
 
         </div>
+
     </header>
 
 
-    <main>
+    <main class="short-homepage">
 
-        <!-- HERO SECTION -->
+        <section class="short-hero">
 
-        <section class="hero-section">
+            <div class="hero-mini-icon">🇩🇪</div>
 
-            <div class="hero-background-shape shape-one"></div>
-            <div class="hero-background-shape shape-two"></div>
+            <p class="small-welcome">Willkommen bei DeutschWelt</p>
 
-            <div class="container hero-grid">
+            <h1>
+                Deutsch lernen.
+                <span>Schritt für Schritt.</span>
+            </h1>
 
-                <div class="hero-content">
+            <p class="short-intro">
+                Einfache Erklärungen, wichtige Wörter und deutsche Grammatik –
+                von A1 bis B2.
+            </p>
 
-                    <div class="welcome-badge">
-                        <span>👋</span>
-                        Willkommen bei DeutschWelt
-                    </div>
-
-                    <h1>
-                        Deutsch lernen.
-                        <span>Einfach verstehen.</span>
-                    </h1>
-
-                    <p class="hero-text">
-                        Lerne Deutsch Schritt für Schritt – von den ersten
-                        Buchstaben bis zu anspruchsvollen Grammatikthemen.
-                        Einfach, freundlich und verständlich.
-                    </p>
-
-                    <div class="hero-actions">
-
-                        <a href="#lernlevels" class="primary-button">
-                            Jetzt anfangen
-                            <span>→</span>
-                        </a>
-
-                        <a href="wortschatz.html" class="secondary-button">
-                            Wortschatz entdecken
-                        </a>
-
-                    </div>
-
-                    <div class="hero-small-info">
-                        <span>✓ Für Anfänger und Fortgeschrittene</span>
-                        <span>✓ A1 bis B2</span>
-                        <span>✓ Lernen in deinem Tempo</span>
-                    </div>
-
-                </div>
+        </section>
 
 
-                <!-- HERO ILLUSTRATION -->
+        <section class="level-section" id="lernlevels">
 
-                <div class="hero-illustration" aria-label="Illustration zum Deutschlernen">
+            <h2>Wo möchtest du starten?</h2>
 
-                    <div class="floating-card floating-card-one">
-                        <span>Hallo!</span>
-                        <small>Guten Morgen 👋</small>
-                    </div>
+            <div class="clean-level-grid">
 
-                    <div class="floating-card floating-card-two">
-                        <span>ABC</span>
-                        <small>Neue Wörter</small>
-                    </div>
+                <a href="lernen.html?level=A1" class="clean-level-card a1-card">
+                    <span class="clean-level">A1</span>
+                    <span class="clean-level-title">Ganz von Anfang</span>
+                    <span class="clean-level-description">
+                        Erste Wörter und einfache Sätze
+                    </span>
+                    <span class="clean-arrow">→</span>
+                </a>
 
-                    <div class="illustration-circle">
 
-                        <svg viewBox="0 0 500 430" role="img"
-                            aria-label="Bücher, Globus und deutsche Lernkarten">
+                <a href="lernen.html?level=A2" class="clean-level-card a2-card">
+                    <span class="clean-level">A2</span>
+                    <span class="clean-level-title">Im Alltag</span>
+                    <span class="clean-level-description">
+                        Gespräche und wichtige Grundlagen
+                    </span>
+                    <span class="clean-arrow">→</span>
+                </a>
 
-                            <ellipse cx="250" cy="390" rx="170" ry="22"
-                                fill="#dbeafe"/>
 
-                            <!-- Books -->
+                <a href="lernen.html?level=B1" class="clean-level-card b1-card">
+                    <span class="clean-level">B1</span>
+                    <span class="clean-level-title">Sicherer sprechen</span>
+                    <span class="clean-level-description">
+                        Meinungen, Arbeit und Erfahrungen
+                    </span>
+                    <span class="clean-arrow">→</span>
+                </a>
 
-                            <rect x="95" y="310" width="300" height="48"
-                                rx="12" fill="#f59e0b"
-                                transform="rotate(-5 245 334)"/>
 
-                            <rect x="105" y="275" width="285" height="50"
-                                rx="12" fill="#2563eb"
-                                transform="rotate(5 245 300)"/>
-
-                            <rect x="125" y="245" width="250" height="50"
-                                rx="12" fill="#ec4899"
-                                transform="rotate(-4 245 270)"/>
-
-                            <path d="M250 245 L250 295"
-                                stroke="#ffffff"
-                                stroke-width="4"
-                                opacity="0.8"/>
-
-                            <!-- Globe -->
-
-                            <circle cx="250" cy="160" r="105"
-                                fill="#bfdbfe"/>
-
-                            <circle cx="250" cy="160" r="88"
-                                fill="#60a5fa"/>
-
-                            <path d="M195 90
-                                     C175 115 185 135 210 145
-                                     C225 155 215 180 235 195
-                                     C250 210 245 235 265 245
-                                     L290 230
-                                     C285 205 310 190 320 170
-                                     C330 145 310 125 295 115
-                                     C275 100 260 90 250 75 Z"
-                                fill="#22c55e"/>
-
-                            <path d="M160 155
-                                     C185 145 205 160 215 175
-                                     C225 190 210 210 195 220
-                                     L175 205
-                                     C160 190 150 175 160 155 Z"
-                                fill="#16a34a"/>
-
-                            <path d="M265 85
-                                     C285 100 300 115 305 135
-                                     L290 150
-                                     L270 135
-                                     L250 115 Z"
-                                fill="#16a34a"/>
-
-                            <path d="M170 115
-                                     Q250 145 330 115"
-                                stroke="#ffffff"
-                                stroke-width="3"
-                                fill="none"
-                                opacity="0.6"/>
-
-                            <path d="M155 160
-                                     Q250 185 345 160"
-                                stroke="#ffffff"
-                                stroke-width="3"
-                                fill="none"
-                                opacity="0.6"/>
-
-                            <path d="M250 55
-                                     Q210 160 250 265"
-                                stroke="#ffffff"
-                                stroke-width="3"
-                                fill="none"
-                                opacity="0.6"/>
-
-                            <path d="M250 55
-                                     Q290 160 250 265"
-                                stroke="#ffffff"
-                                stroke-width="3"
-                                fill="none"
-                                opacity="0.6"/>
-
-                            <!-- Flag -->
-
-                            <rect x="350" y="55" width="7" height="130"
-                                rx="3" fill="#334155"/>
-
-                            <rect x="357" y="58" width="90" height="58"
-                                rx="4" fill="#ffffff"/>
-
-                            <rect x="357" y="58" width="90" height="19"
-                                fill="#111827"/>
-
-                            <rect x="357" y="77" width="90" height="20"
-                                fill="#ef4444"/>
-
-                            <rect x="357" y="97" width="90" height="19"
-                                fill="#facc15"/>
-
-                            <!-- Pencil -->
-
-                            <g transform="rotate(-35 105 180)">
-                                <rect x="80" y="100" width="28" height="150"
-                                    rx="8" fill="#facc15"/>
-
-                                <rect x="80" y="100" width="28" height="28"
-                                    rx="8" fill="#f472b6"/>
-
-                                <path d="M80 250 L94 275 L108 250 Z"
-                                    fill="#f5d0a9"/>
-
-                                <path d="M90 268 L94 275 L98 268 Z"
-                                    fill="#334155"/>
-                            </g>
-
-                            <!-- Small stars -->
-
-                            <text x="70" y="90" font-size="34">✦</text>
-                            <text x="405" y="230" font-size="28">✦</text>
-                            <text x="120" y="230" font-size="22">✧</text>
-
-                        </svg>
-
-                    </div>
-
-                </div>
+                <a href="lernen.html?level=B2" class="clean-level-card b2-card">
+                    <span class="clean-level">B2</span>
+                    <span class="clean-level-title">Deutsch vertiefen</span>
+                    <span class="clean-level-description">
+                        Komplexe Themen und Grammatik
+                    </span>
+                    <span class="clean-arrow">→</span>
+                </a>
 
             </div>
 
         </section>
 
 
-        <!-- LEVEL SECTION -->
-
-        <section class="levels-section" id="lernlevels">
-
-            <div class="container">
-
-                <div class="section-heading">
-
-                    <span class="section-label">DEIN LERNWEG</span>
-
-                    <h2>Wähle dein Deutschniveau</h2>
-
-                    <p>
-                        Starte dort, wo du dich wohlfühlst.
-                        Du kannst jederzeit zu einem anderen Niveau wechseln.
-                    </p>
-
-                </div>
-
-
-                <div class="level-grid">
-
-                    <a href="lernen.html?level=A1" class="level-card level-a1">
-
-                        <div class="level-card-top">
-                            <span class="level-label">Anfänger</span>
-                            <span class="level-icon">🌱</span>
-                        </div>
-
-                        <div class="level-number">A1</div>
-
-                        <h3>Deutsch von Anfang an</h3>
-
-                        <p>
-                            Alphabet, Zahlen, Begrüßungen,
-                            erste Sätze und wichtige Alltagswörter.
-                        </p>
-
-                        <span class="level-link">
-                            A1 entdecken →
-                        </span>
-
-                    </a>
-
-
-                    <a href="lernen.html?level=A2" class="level-card level-a2">
-
-                        <div class="level-card-top">
-                            <span class="level-label">Grundlagen</span>
-                            <span class="level-icon">🌼</span>
-                        </div>
-
-                        <div class="level-number">A2</div>
-
-                        <h3>Im Alltag sicherer werden</h3>
-
-                        <p>
-                            Gespräche, Reisen, Arbeit,
-                            Gesundheit und wichtige Grammatik.
-                        </p>
-
-                        <span class="level-link">
-                            A2 entdecken →
-                        </span>
-
-                    </a>
-
-
-                    <a href="lernen.html?level=B1" class="level-card level-b1">
-
-                        <div class="level-card-top">
-                            <span class="level-label">Mittelstufe</span>
-                            <span class="level-icon">🚀</span>
-                        </div>
-
-                        <div class="level-number">B1</div>
-
-                        <h3>Selbstständig Deutsch sprechen</h3>
-
-                        <p>
-                            Meinungen ausdrücken,
-                            Bewerbungen, Erfahrungen und längere Texte.
-                        </p>
-
-                        <span class="level-link">
-                            B1 entdecken →
-                        </span>
-
-                    </a>
-
-
-                    <a href="lernen.html?level=B2" class="level-card level-b2">
-
-                        <div class="level-card-top">
-                            <span class="level-label">Fortgeschritten</span>
-                            <span class="level-icon">🏆</span>
-                        </div>
-
-                        <div class="level-number">B2</div>
-
-                        <h3>Deutsch sicher anwenden</h3>
-
-                        <p>
-                            Komplexe Themen, Diskussionen,
-                            anspruchsvolle Grammatik und Berufssprache.
-                        </p>
-
-                        <span class="level-link">
-                            B2 entdecken →
-                        </span>
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- FEATURES SECTION -->
-
-        <section class="features-section">
-
-            <div class="container">
-
-                <div class="section-heading">
-
-                    <span class="section-label">ENTDECKE MEHR</span>
-
-                    <h2>Alles, was du zum Lernen brauchst</h2>
-
-                    <p>
-                        Lerne neue Wörter, verstehe Grammatik
-                        und wiederhole wichtige Themen.
-                    </p>
-
-                </div>
-
-
-                <div class="feature-grid">
-
-                    <a href="wortschatz.html" class="feature-card">
-
-                        <div class="feature-image vocabulary-image">
-
-                            <svg viewBox="0 0 240 150"
-                                aria-label="Illustration von Wortkarten">
-
-                                <rect x="28" y="38" width="125" height="82"
-                                    rx="12" fill="#bfdbfe"
-                                    transform="rotate(-12 90 80)"/>
-
-                                <rect x="65" y="25" width="125" height="82"
-                                    rx="12" fill="#ffffff"
-                                    stroke="#93c5fd"
-                                    stroke-width="3"
-                                    transform="rotate(8 125 65)"/>
-
-                                <text x="95" y="60"
-                                    font-size="22"
-                                    font-weight="800"
-                                    fill="#2563eb">Haus</text>
-
-                                <text x="91" y="83"
-                                    font-size="13"
-                                    fill="#64748b">das Haus</text>
-
-                                <text x="110" y="105"
-                                    font-size="12"
-                                    fill="#64748b">🏠</text>
-
-                            </svg>
-
-                        </div>
-
-                        <div class="feature-content">
-
-                            <span class="feature-tag">WÖRTER</span>
-
-                            <h3>Wortschatz</h3>
-
-                            <p>
-                                Lerne wichtige Wörter mit Artikel,
-                                Plural, Bedeutung und Beispielsätzen.
-                            </p>
-
-                            <span class="feature-link">
-                                Wörter lernen →
-                            </span>
-
-                        </div>
-
-                    </a>
-
-
-                    <a href="grammatik.html" class="feature-card">
-
-                        <div class="feature-image grammar-image">
-
-                            <svg viewBox="0 0 240 150"
-                                aria-label="Illustration eines Grammatikbuchs">
-
-                                <rect x="43" y="27" width="155" height="105"
-                                    rx="8" fill="#fef3c7"/>
-
-                                <rect x="35" y="20" width="155" height="105"
-                                    rx="8" fill="#ffffff"
-                                    stroke="#fbbf24"
-                                    stroke-width="3"/>
-
-                                <line x1="112" y1="25" x2="112" y2="120"
-                                    stroke="#fcd34d"
-                                    stroke-width="3"/>
-
-                                <text x="52" y="52"
-                                    font-size="14"
-                                    font-weight="800"
-                                    fill="#92400e">Nomen</text>
-
-                                <text x="52" y="75"
-                                    font-size="12"
-                                    fill="#78350f">der Tisch</text>
-
-                                <text x="52" y="94"
-                                    font-size="12"
-                                    fill="#78350f">die Lampe</text>
-
-                                <text x="125" y="52"
-                                    font-size="14"
-                                    font-weight="800"
-                                    fill="#92400e">Verb</text>
-
-                                <text x="125" y="75"
-                                    font-size="12"
-                                    fill="#78350f">ich lerne</text>
-
-                                <text x="125" y="94"
-                                    font-size="12"
-                                    fill="#78350f">du lernst</text>
-
-                            </svg>
-
-                        </div>
-
-                        <div class="feature-content">
-
-                            <span class="feature-tag">REGELN</span>
-
-                            <h3>Grammatik</h3>
-
-                            <p>
-                                Verstehe deutsche Grammatik
-                                mit einfachen Regeln und Beispielen.
-                            </p>
-
-                            <span class="feature-link">
-                                Grammatik lernen →
-                            </span>
-
-                        </div>
-
-                    </a>
-
-
-                    <a href="lernen.html?level=A1" class="feature-card">
-
-                        <div class="feature-image learning-image">
-
-                            <svg viewBox="0 0 240 150"
-                                aria-label="Illustration einer Lernreise">
-
-                                <circle cx="120" cy="75" r="55"
-                                    fill="#dcfce7"/>
-
-                                <path d="M75 80
-                                         C85 55 100 50 115 60
-                                         C130 70 135 45 160 55
-                                         L175 82
-                                         C150 95 145 110 125 105
-                                         C105 100 90 110 75 80 Z"
-                                    fill="#22c55e"/>
-
-                                <path d="M72 72
-                                         C95 80 110 75 125 82
-                                         C140 90 155 80 173 72"
-                                    stroke="#ffffff"
-                                    stroke-width="3"
-                                    fill="none"/>
-
-                                <path d="M120 20
-                                         C100 45 100 105 120 130"
-                                    stroke="#ffffff"
-                                    stroke-width="3"
-                                    fill="none"/>
-
-                                <path d="M120 20
-                                         C140 45 140 105 120 130"
-                                    stroke="#ffffff"
-                                    stroke-width="3"
-                                    fill="none"/>
-
-                                <text x="104" y="143"
-                                    font-size="12"
-                                    font-weight="700"
-                                    fill="#166534">Schritt für Schritt</text>
-
-                            </svg>
-
-                        </div>
-
-                        <div class="feature-content">
-
-                            <span class="feature-tag">LERNWELTEN</span>
-
-                            <h3>Themen entdecken</h3>
-
-                            <p>
-                                Entdecke interessante Themen
-                                und lerne in deinem eigenen Tempo.
-                            </p>
-
-                            <span class="feature-link">
-                                Lernwelten öffnen →
-                            </span>
-
-                        </div>
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- CALL TO ACTION -->
-
-        <section class="final-cta-section">
-
-            <div class="container">
-
-                <div class="final-cta">
-
-                    <div>
-                        <span class="section-label">BEREIT?</span>
-
-                        <h2>Deine Deutschreise beginnt hier.</h2>
-
-                        <p>
-                            Starte mit A1 oder wiederhole ein Thema,
-                            das du schon kennst.
-                        </p>
-                    </div>
-
-                    <a href="lernen.html?level=A1" class="primary-button">
-                        Mit A1 starten
-                        <span>→</span>
-                    </a>
-
-                </div>
-
-            </div>
+        <section class="quick-links-section">
+
+            <a href="wortschatz.html" class="quick-link-card">
+                <span class="quick-link-icon">📚</span>
+                <span>
+                    <strong>Wortschatz</strong>
+                    <small>Neue Wörter entdecken</small>
+                </span>
+                <span>→</span>
+            </a>
+
+
+            <a href="grammatik.html" class="quick-link-card">
+                <span class="quick-link-icon">✏️</span>
+                <span>
+                    <strong>Grammatik</strong>
+                    <small>Regeln einfach verstehen</small>
+                </span>
+                <span>→</span>
+            </a>
 
         </section>
 
     </main>
 
 
-    <!-- FOOTER -->
+    <footer class="simple-footer">
 
-    <footer class="site-footer">
+        <div class="simple-footer-inner">
 
-        <div class="container footer-inner">
+            <span>© 2026 DeutschWelt</span>
 
-            <div class="footer-brand">
-                <strong>🌍 DeutschWelt</strong>
-                <p>Deutsch verstehen. Deutsch anwenden.</p>
-            </div>
-
-            <div class="footer-links">
-                <a href="ueber-deutschwelt.html">Über DeutschWelt</a>
+            <div>
+                <a href="ueber-deutschwelt.html">Über uns</a>
                 <a href="kontakt.html">Kontakt</a>
                 <a href="datenschutz.html">Datenschutz</a>
                 <a href="impressum.html">Impressum</a>
             </div>
 
-        </div>
-
-        <div class="footer-bottom">
-            © 2026 DeutschWelt. Alle Rechte vorbehalten.
         </div>
 
     </footer>
