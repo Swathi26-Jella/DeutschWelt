@@ -10,13 +10,9 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        DeutschWelt – Lernwelten A1 bis B2
-    </title>
-
     <meta
         name="description"
-        content="Deutsch lernen mit DeutschWelt: einfache Lerninhalte für A1, A2, B1 und B2."
+        content="DeutschWelt Lernwelten: Deutsch lernen und wiederholen auf den Niveaus A1, A2, B1 und B2."
     >
 
     <meta
@@ -24,10 +20,9 @@
         content="index, follow"
     >
 
-    <link
-        rel="canonical"
-        href="https://swathi26-jella.github.io/Deutsch_Welt/lernen.html"
-    >
+    <title>
+        Lernwelten – DeutschWelt
+    </title>
 
     <link
         rel="stylesheet"
@@ -40,308 +35,264 @@
 <body>
 
 
-    <!-- ==================================================
-         HEADER
-    ================================================== -->
+<!-- ==================================================
+     HEADER
+================================================== -->
 
-    <header class="site-header">
+<header class="site-header">
 
-        <div class="header-inner">
+    <div class="header-inner">
 
+
+        <!-- LOGO -->
+
+        <a
+            href="index.html"
+            class="logo"
+            aria-label="DeutschWelt Startseite"
+        >
+
+            <span
+                class="logo-icon"
+                aria-hidden="true"
+            >
+                🇩🇪
+            </span>
+
+            <span>
+                DeutschWelt
+            </span>
+
+        </a>
+
+
+        <!-- NAVIGATION -->
+
+        <nav
+            class="main-nav"
+            aria-label="Hauptnavigation"
+        >
+
+            <a href="index.html">
+                Startseite
+            </a>
 
             <a
-                href="index.html"
-                class="logo"
-                aria-label="DeutschWelt Startseite"
+                href="lernen.html?level=A1"
+                class="active"
+                aria-current="page"
             >
+                Lernwelten
+            </a>
 
-                <span
-                    class="logo-icon"
-                    aria-hidden="true"
-                >
-                    🇩🇪
-                </span>
+            <a href="wortschatz.html">
+                Wortschatz
+            </a>
 
-                <span>
-                    DeutschWelt
-                </span>
+            <a href="grammatik.html">
+                Grammatik
+            </a>
 
+        </nav>
+
+
+    </div>
+
+</header>
+
+
+
+<!-- ==================================================
+     MAIN
+================================================== -->
+
+<main class="learning-page">
+
+
+    <!-- ==================================================
+         LEVEL HEADER
+    ================================================== -->
+
+    <section
+        class="level-header"
+        aria-labelledby="levelTitle"
+    >
+
+        <span
+            class="eyebrow"
+            id="levelEyebrow"
+        >
+            A1 · Lernstufe
+        </span>
+
+
+        <h1 id="levelTitle">
+            A1 – Deutsch von Anfang an
+        </h1>
+
+
+        <p id="levelDescription">
+            Alphabet, Aussprache, Zahlen, Alltag
+            und grundlegende Grammatik.
+        </p>
+
+
+        <!-- LEVEL SELECTION -->
+
+        <div
+            class="other-levels"
+            aria-label="Lernniveau auswählen"
+        >
+
+            <a
+                href="lernen.html?level=A1"
+                data-level-link="A1"
+                class="selected"
+            >
+                A1
             </a>
 
 
-            <nav
-                class="main-nav"
-                aria-label="Hauptnavigation"
+            <a
+                href="lernen.html?level=A2"
+                data-level-link="A2"
             >
+                A2
+            </a>
 
-                <a href="index.html">
-                    Startseite
-                </a>
 
-                <a
-                    href="lernen.html?level=A1"
-                    class="active"
-                    aria-current="page"
-                >
-                    Lernwelten
-                </a>
+            <a
+                href="lernen.html?level=B1"
+                data-level-link="B1"
+            >
+                B1
+            </a>
 
-                <a href="wortschatz.html">
-                    Wortschatz
-                </a>
 
-                <a href="grammatik.html">
-                    Grammatik
-                </a>
-
-            </nav>
+            <a
+                href="lernen.html?level=B2"
+                data-level-link="B2"
+            >
+                B2
+            </a>
 
         </div>
 
-    </header>
+    </section>
 
 
 
     <!-- ==================================================
-         MAIN
+         TWO-COLUMN LEARNING AREA
     ================================================== -->
 
-    <main class="learning-page">
+    <div class="learning-layout">
 
 
         <!-- ==================================================
-             LEVEL HEADER
+             LEFT: TOPIC NAVIGATION
         ================================================== -->
 
-        <section class="learning-top">
+        <aside
+            class="topic-sidebar"
+            aria-label="Themenübersicht"
+        >
 
+            <div id="topicNavigation">
 
-            <a
-                href="index.html"
-                class="back-link"
-            >
-                ← Zur Startseite
-            </a>
+                <div class="loading-message">
 
+                    <div class="loading-spinner"></div>
 
-            <div class="level-header">
+                    <span>
+                        Themen werden geladen ...
+                    </span>
 
-                <span
-                    id="levelEyebrow"
-                    class="eyebrow"
-                >
-                    A1 · Lernstufe
-                </span>
-
-
-                <h1 id="levelTitle">
-                    Deutsch lernen
-                </h1>
-
-
-                <p id="levelDescription">
-                    Inhalte werden geladen ...
-                </p>
+                </div>
 
             </div>
 
-
-
-            <!-- ==================================================
-                 LEVEL SELECTOR
-            ================================================== -->
-
-            <nav
-                class="other-levels"
-                aria-label="Lernstufe auswählen"
-            >
-
-                <a
-                    href="lernen.html?level=A1"
-                    data-level-link="A1"
-                    class="selected"
-                    aria-label="Lernstufe A1"
-                >
-                    A1
-                </a>
-
-
-                <a
-                    href="lernen.html?level=A2"
-                    data-level-link="A2"
-                    aria-label="Lernstufe A2"
-                >
-                    A2
-                </a>
-
-
-                <a
-                    href="lernen.html?level=B1"
-                    data-level-link="B1"
-                    aria-label="Lernstufe B1"
-                >
-                    B1
-                </a>
-
-
-                <a
-                    href="lernen.html?level=B2"
-                    data-level-link="B2"
-                    aria-label="Lernstufe B2"
-                >
-                    B2
-                </a>
-
-            </nav>
-
-
-        </section>
+        </aside>
 
 
 
         <!-- ==================================================
-             LEARNING CONTENT
+             RIGHT: TOPIC CONTENT
         ================================================== -->
 
         <section
-            class="learning-layout"
-            aria-label="Lerninhalte"
+            class="topic-content-area"
+            aria-live="polite"
+            aria-label="Lerninhalt"
         >
 
+            <div id="topicContent">
 
-            <!-- ==================================================
-                 TOPIC SIDEBAR
-            ================================================== -->
+                <div class="loading-message">
 
-            <aside class="topic-sidebar">
+                    <div class="loading-spinner"></div>
 
-
-                <div class="sidebar-heading">
-
-                    <span class="eyebrow">
-                        Themen
+                    <span>
+                        Inhalte werden geladen ...
                     </span>
 
-
-                    <h2>
-                        Lerninhalte
-                    </h2>
-
                 </div>
 
-
-                <div
-                    id="topicNavigation"
-                    aria-label="Themenauswahl"
-                >
-
-                    <div class="loading-message">
-
-                        <div class="loading-spinner"></div>
-
-                        <span>
-                            Inhalte werden geladen ...
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-            </aside>
-
-
-
-            <!-- ==================================================
-                 TOPIC CONTENT
-            ================================================== -->
-
-            <section
-                class="topic-content-area"
-                aria-live="polite"
-            >
-
-                <div id="topicContent">
-
-
-                    <div class="welcome-content">
-
-                        <div
-                            class="welcome-icon"
-                            aria-hidden="true"
-                        >
-                            📖
-                        </div>
-
-
-                        <h2>
-                            Wähle ein Thema
-                        </h2>
-
-
-                        <p>
-                            Wähle links ein Thema aus,
-                            um die Lerninhalte zu sehen.
-                        </p>
-
-                    </div>
-
-
-                </div>
-
-            </section>
-
+            </div>
 
         </section>
 
 
-    </main>
+    </div>
+
+
+</main>
 
 
 
-    <!-- ==================================================
-         FOOTER
-    ================================================== -->
+<!-- ==================================================
+     FOOTER
+================================================== -->
 
-    <footer class="site-footer">
+<footer class="site-footer">
 
-        <div class="footer-inner">
-
-
-            <div>
-
-                <strong>
-                    DeutschWelt
-                </strong>
-
-                <p>
-                    Deutsch verstehen.
-                    Deutsch anwenden.
-                </p>
-
-            </div>
+    <div class="footer-inner">
 
 
-            <div>
+        <div>
 
-                <p>
-                    © 2026 DeutschWelt
-                </p>
+            <strong>
+                DeutschWelt
+            </strong>
 
-            </div>
-
+            <p>
+                Deutsch verstehen. Deutsch anwenden.
+            </p>
 
         </div>
 
-    </footer>
+
+        <div>
+
+            <p>
+                © 2026 DeutschWelt
+            </p>
+
+        </div>
+
+
+    </div>
+
+</footer>
 
 
 
-    <!-- ==================================================
-         JAVASCRIPT
-    ================================================== -->
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
+
 
 </body>
 
