@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://swathi26-jella.github.io/Deutsch_Welt/sitemap.xml
