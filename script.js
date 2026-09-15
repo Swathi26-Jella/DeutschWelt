@@ -1,12 +1,12 @@
-// ======================================================
-// DEUTSCHWELT
-// Supabase content + German audio
-// ======================================================
+/* ======================================================
+   DEUTSCHWELT
+   FINAL JAVASCRIPT
+====================================================== */
 
 
-// ======================================================
-// SUPABASE CONFIGURATION
-// ======================================================
+/* ======================================================
+   SUPABASE
+====================================================== */
 
 const SUPABASE_URL =
     "https://llxcyabptsbdtsdhkzkc.supabase.co";
@@ -14,116 +14,129 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
     "sb_publishable_MKh0z87kMiDAQX3jnaoADQ_-D0_XXd4";
 
-
 let supabaseClient = null;
+
 let currentTopics = [];
 
 
-// ======================================================
-// LOAD SUPABASE LIBRARY
-// ======================================================
 
-function loadSupabaseLibrary() {
-
-    return new Promise((resolve, reject) => {
-
-        // Already loaded
-        if (window.supabase) {
-            resolve();
-            return;
-        }
-
-        const existingScript =
-            document.querySelector(
-                'script[src*="supabase-js"]'
-            );
-
-        // Script already exists but is still loading
-        if (existingScript) {
-
-            existingScript.addEventListener(
-                "load",
-                () => resolve(),
-                { once: true }
-            );
-
-            existingScript.addEventListener(
-                "error",
-                () => reject(
-                    new Error(
-                        "Die Supabase-Bibliothek konnte nicht geladen werden."
-                    )
-                ),
-                { once: true }
-            );
-
-            return;
-        }
-
-        const script =
-            document.createElement("script");
-
-        script.src =
-            "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-
-        script.async = true;
-
-        script.onload = () => resolve();
-
-        script.onerror = () => reject(
-            new Error(
-                "Die Supabase-Bibliothek konnte nicht geladen werden."
-            )
-        );
-
-        document.head.appendChild(script);
-
-    });
-
-}
-
-
-// ======================================================
-// CONNECT TO SUPABASE
-// ======================================================
+/* ======================================================
+   CONNECT SUPABASE
+====================================================== */
 
 async function connectSupabase() {
 
-    await loadSupabaseLibrary();
-
     if (!window.supabase) {
 
-        throw new Error(
-            "Supabase ist im Browser nicht verfügbar."
-        );
+        await new Promise((resolve, reject) => {
+
+            const script =
+                document.createElement("script");
+
+            script.src =
+                "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+            script.onload = resolve;
+
+            script.onerror = () =>
+                reject(
+                    new Error(
+                        "Die Supabase-Bibliothek konnte nicht geladen werden."
+                    )
+                );
+
+            document.head.appendChild(script);
+
+        });
 
     }
 
-    if (
-        !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY ||
-        SUPABASE_URL.includes("PASTE_YOUR") ||
-        SUPABASE_ANON_KEY.includes("PASTE_YOUR")
-    ) {
 
+    if (!window.supabase) {
         throw new Error(
-            "Supabase URL oder öffentlicher Schlüssel fehlt."
+            "Supabase ist nicht verfügbar."
         );
-
     }
 
-    supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
+
+    if (!supabaseClient) {
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+
+    }
 
 }
 
 
-// ======================================================
-// TEXT TO SPEECH
-// ======================================================
+/* ======================================================
+   HTML ESCAPE
+====================================================== */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* ======================================================
+   ARRAY PARSER
+====================================================== */
+
+function parseArray(value) {
+
+    if (!value) {
+        return [];
+    }
+
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    if (typeof value !== "string") {
+        return [];
+    }
+
+    try {
+
+        const parsed =
+            JSON.parse(value);
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+    } catch {
+
+        return value
+            .split(",")
+            .map(item => item.trim())
+            .filter(Boolean);
+
+    }
+
+}
+
+
+/* ======================================================
+   AUDIO
+====================================================== */
 
 let germanVoice = null;
 
@@ -139,29 +152,19 @@ function loadGermanVoice() {
     const voices =
         window.speechSynthesis.getVoices();
 
-    if (!voices || !voices.length) {
-        return;
-    }
-
-    const german =
+    germanVoice =
         voices.find(
             voice =>
                 voice.lang &&
                 voice.lang
                     .toLowerCase()
                     .startsWith("de")
-        );
-
-    if (german) {
-        germanVoice = german;
-    }
+        ) || null;
 
 }
 
 
-if (
-    "speechSynthesis" in window
-) {
+if ("speechSynthesis" in window) {
 
     loadGermanVoice();
 
@@ -170,10 +173,6 @@ if (
 
 }
 
-
-// ======================================================
-// SPEAK GERMAN
-// ======================================================
 
 function speakGerman(text) {
 
@@ -184,24 +183,15 @@ function speakGerman(text) {
     if (
         !("speechSynthesis" in window)
     ) {
-
-        alert(
-            "Dein Browser unterstützt keine Sprachausgabe."
-        );
-
         return;
     }
+
+    window.speechSynthesis.cancel();
 
     const cleanText =
         String(text)
             .replace(/🔊/g, "")
             .trim();
-
-    if (!cleanText) {
-        return;
-    }
-
-    window.speechSynthesis.cancel();
 
     const utterance =
         new SpeechSynthesisUtterance(
@@ -222,10 +212,6 @@ function speakGerman(text) {
 
 }
 
-
-// ======================================================
-// AUDIO BUTTON
-// ======================================================
 
 function audioButton(
     text,
@@ -253,10 +239,6 @@ function audioButton(
 }
 
 
-// ======================================================
-// AUDIO BUTTON CLICK
-// ======================================================
-
 document.addEventListener(
     "click",
     event => {
@@ -281,89 +263,9 @@ document.addEventListener(
 );
 
 
-// ======================================================
-// HTML ESCAPE
-// ======================================================
-
-function escapeHTML(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return "";
-    }
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-// ======================================================
-// PARSE ARRAY
-// ======================================================
-
-function parseArray(value) {
-
-    if (!value) {
-        return [];
-    }
-
-    if (Array.isArray(value)) {
-        return value;
-    }
-
-    try {
-
-        const parsed =
-            JSON.parse(value);
-
-        return Array.isArray(parsed)
-            ? parsed
-            : [];
-
-    } catch {
-
-        // Also support simple comma-separated values
-        if (typeof value === "string") {
-
-            return value
-                .split(",")
-                .map(item => item.trim())
-                .filter(Boolean);
-
-        }
-
-        return [];
-
-    }
-
-}
-
-
-// ======================================================
-// GET LEVEL FROM URL
-// ======================================================
+/* ======================================================
+   LEVEL FROM URL
+====================================================== */
 
 function getURLLevel() {
 
@@ -373,14 +275,10 @@ function getURLLevel() {
         );
 
     let level =
-        params.get("level");
-
-    if (!level) {
-        level = "A1";
-    }
-
-    level =
-        level.toUpperCase().trim();
+        (
+            params.get("level") ||
+            "A1"
+        ).toUpperCase();
 
     if (
         ![
@@ -390,9 +288,7 @@ function getURLLevel() {
             "B2"
         ].includes(level)
     ) {
-
         level = "A1";
-
     }
 
     return level;
@@ -400,9 +296,9 @@ function getURLLevel() {
 }
 
 
-// ======================================================
-// LEARNING PAGE
-// ======================================================
+/* ======================================================
+   LEARNING PAGE
+====================================================== */
 
 async function loadLearningPage() {
 
@@ -411,18 +307,15 @@ async function loadLearningPage() {
             "topicNavigation"
         );
 
-    if (!navigation) {
-        return;
-    }
-
     const content =
         document.getElementById(
             "topicContent"
         );
 
-    if (!content) {
+    if (!navigation || !content) {
         return;
     }
+
 
     const level =
         getURLLevel();
@@ -462,34 +355,34 @@ async function loadLearningPage() {
     };
 
 
-    const levelTitle =
-        document.getElementById(
-            "levelTitle"
-        );
-
-    const levelEyebrow =
+    const eyebrow =
         document.getElementById(
             "levelEyebrow"
         );
 
-    const levelDescription =
+    const title =
+        document.getElementById(
+            "levelTitle"
+        );
+
+    const description =
         document.getElementById(
             "levelDescription"
         );
 
 
-    if (levelTitle) {
-        levelTitle.textContent =
-            titles[level];
-    }
-
-    if (levelEyebrow) {
-        levelEyebrow.textContent =
+    if (eyebrow) {
+        eyebrow.textContent =
             `${level} · Lernstufe`;
     }
 
-    if (levelDescription) {
-        levelDescription.textContent =
+    if (title) {
+        title.textContent =
+            titles[level];
+    }
+
+    if (description) {
+        description.textContent =
             descriptions[level];
     }
 
@@ -515,6 +408,21 @@ async function loadLearningPage() {
             <div class="loading-spinner"></div>
 
             <span>
+                Themen werden geladen ...
+            </span>
+
+        </div>
+
+    `;
+
+
+    content.innerHTML = `
+
+        <div class="loading-message">
+
+            <div class="loading-spinner"></div>
+
+            <span>
                 Inhalte werden geladen ...
             </span>
 
@@ -525,9 +433,7 @@ async function loadLearningPage() {
 
     try {
 
-        if (!supabaseClient) {
-            await connectSupabase();
-        }
+        await connectSupabase();
 
 
         const {
@@ -594,10 +500,7 @@ async function loadLearningPage() {
 
     } catch (error) {
 
-        console.error(
-            "Learning page error:",
-            error
-        );
+        console.error(error);
 
 
         navigation.innerHTML = `
@@ -605,13 +508,12 @@ async function loadLearningPage() {
             <div class="error-message">
 
                 <strong>
-                    Lerninhalte konnten nicht geladen werden.
+                    Themen konnten nicht geladen werden.
                 </strong>
 
                 <p>
                     ${escapeHTML(
-                        error.message ||
-                        "Unbekannter Fehler."
+                        error.message
                     )}
                 </p>
 
@@ -624,9 +526,9 @@ async function loadLearningPage() {
 }
 
 
-// ======================================================
-// TOPIC NAVIGATION
-// ======================================================
+/* ======================================================
+   TOPIC NAVIGATION
+====================================================== */
 
 function renderTopicNavigation() {
 
@@ -639,172 +541,147 @@ function renderTopicNavigation() {
         return;
     }
 
+
     navigation.innerHTML = "";
-
-
-    if (!currentTopics.length) {
-        return;
-    }
 
 
     const categories = {};
 
 
-    currentTopics.forEach(
-        topic => {
+    currentTopics.forEach(topic => {
 
-            const category =
-                topic.category ||
-                "Allgemein";
-
-
-            if (
-                !categories[category]
-            ) {
-
-                categories[category] =
-                    [];
-
-            }
+        const category =
+            topic.category ||
+            "Allgemein";
 
 
-            categories[category]
-                .push(topic);
-
+        if (!categories[category]) {
+            categories[category] = [];
         }
-    );
+
+
+        categories[category]
+            .push(topic);
+
+    });
 
 
     Object.keys(categories)
-        .forEach(
-            category => {
+        .forEach(category => {
 
-                const wrapper =
-                    document.createElement(
-                        "div"
-                    );
-
-                wrapper.className =
-                    "topic-category";
-
-
-                const heading =
-                    document.createElement(
-                        "h3"
-                    );
-
-                heading.textContent =
-                    category;
-
-
-                wrapper.appendChild(
-                    heading
+            const wrapper =
+                document.createElement(
+                    "div"
                 );
 
+            wrapper.className =
+                "topic-category";
 
-                categories[category]
-                    .forEach(
-                        topic => {
 
-                            const button =
-                                document.createElement(
-                                    "button"
+            const heading =
+                document.createElement(
+                    "h3"
+                );
+
+            heading.textContent =
+                category;
+
+
+            wrapper.appendChild(
+                heading
+            );
+
+
+            categories[category]
+                .forEach(topic => {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.type =
+                        "button";
+
+                    button.className =
+                        "topic-button";
+
+                    button.dataset.topicId =
+                        topic.id;
+
+
+                    button.innerHTML = `
+
+                        <span class="topic-icon">
+                            ${escapeHTML(
+                                topic.icon || "📘"
+                            )}
+                        </span>
+
+                        <span class="topic-button-text">
+                            ${escapeHTML(
+                                topic.title || ""
+                            )}
+                        </span>
+
+                        <span class="topic-nav-audio">
+                            🔊
+                        </span>
+
+                    `;
+
+
+                    button.addEventListener(
+                        "click",
+                        event => {
+
+                            const audio =
+                                event.target.closest(
+                                    ".topic-nav-audio"
                                 );
 
 
-                            button.type =
-                                "button";
+                            if (audio) {
 
-                            button.className =
-                                "topic-button";
+                                event.preventDefault();
+                                event.stopPropagation();
 
-                            button.dataset.topicId =
-                                topic.id;
+                                speakGerman(
+                                    topic.title
+                                );
 
+                                return;
 
-                            button.innerHTML = `
-
-                                <span class="topic-icon">
-
-                                    ${escapeHTML(
-                                        topic.icon || "📘"
-                                    )}
-
-                                </span>
-
-                                <span class="topic-button-text">
-
-                                    ${escapeHTML(
-                                        topic.title || ""
-                                    )}
-
-                                </span>
-
-                                <span
-                                    class="topic-nav-audio"
-                                    title="Titel anhören"
-                                    role="button"
-                                    tabindex="0"
-                                >
-                                    🔊
-                                </span>
-
-                            `;
+                            }
 
 
-                            button.addEventListener(
-                                "click",
-                                event => {
-
-                                    const audio =
-                                        event.target.closest(
-                                            ".topic-nav-audio"
-                                        );
-
-
-                                    if (audio) {
-
-                                        event.preventDefault();
-                                        event.stopPropagation();
-
-                                        speakGerman(
-                                            topic.title
-                                        );
-
-                                        return;
-
-                                    }
-
-
-                                    showTopic(
-                                        topic.id
-                                    );
-
-                                }
-                            );
-
-
-                            wrapper.appendChild(
-                                button
+                            showTopic(
+                                topic.id
                             );
 
                         }
                     );
 
 
-                navigation.appendChild(
-                    wrapper
-                );
+                    wrapper.appendChild(
+                        button
+                    );
 
-            }
-        );
+                });
+
+
+            navigation.appendChild(
+                wrapper
+            );
+
+        });
 
 }
 
 
-// ======================================================
-// SHOW TOPIC
-// ======================================================
+/* ======================================================
+   SHOW ONE TOPIC
+====================================================== */
 
 function showTopic(id) {
 
@@ -825,19 +702,17 @@ function showTopic(id) {
         .querySelectorAll(
             ".topic-button"
         )
-        .forEach(
-            button => {
+        .forEach(button => {
 
-                button.classList.toggle(
-                    "active",
-                    String(
-                        button.dataset.topicId
-                    ) ===
-                    String(id)
-                );
+            button.classList.toggle(
+                "active",
+                String(
+                    button.dataset.topicId
+                ) ===
+                String(id)
+            );
 
-            }
-        );
+        });
 
 
     const content =
@@ -859,23 +734,21 @@ function showTopic(id) {
 }
 
 
-// ======================================================
-// BUILD TOPIC HTML
-// ======================================================
+/* ======================================================
+   TOPIC CONTENT
+====================================================== */
 
 function buildTopicHTML(topic) {
 
-    const keyPoints =
+    const points =
         parseArray(
             topic.key_points
         );
-
 
     const patterns =
         parseArray(
             topic.sentence_patterns
         );
-
 
     const examples =
         parseArray(
@@ -888,14 +761,12 @@ function buildTopicHTML(topic) {
         <article class="topic-article">
 
 
-            <div class="topic-article-header">
+            <header class="topic-article-header">
 
                 <div class="article-icon">
-
                     ${escapeHTML(
                         topic.icon || "📘"
                     )}
-
                 </div>
 
 
@@ -942,10 +813,13 @@ function buildTopicHTML(topic) {
 
                 </div>
 
-            </div>
+            </header>
 
 
-            <section class="content-section first-section">
+
+            <section
+                class="content-section first-section"
+            >
 
                 <h3>
                     📖 Einfach erklärt
@@ -965,8 +839,9 @@ function buildTopicHTML(topic) {
             </section>
 
 
+
             ${
-                keyPoints.length
+                points.length
                 ?
                 `
 
@@ -978,17 +853,19 @@ function buildTopicHTML(topic) {
 
                     <ul class="content-list">
 
-                        ${keyPoints.map(
-                            item => `
+                        ${points.map(
+                            point => `
 
                             <li>
 
                                 <span>
-                                    ${escapeHTML(item)}
+                                    ${escapeHTML(
+                                        point
+                                    )}
                                 </span>
 
                                 ${audioButton(
-                                    item
+                                    point
                                 )}
 
                             </li>
@@ -1005,6 +882,7 @@ function buildTopicHTML(topic) {
             }
 
 
+
             ${
                 patterns.length
                 ?
@@ -1019,16 +897,18 @@ function buildTopicHTML(topic) {
                     <div class="pattern-list">
 
                         ${patterns.map(
-                            item => `
+                            pattern => `
 
                             <div class="pattern-box">
 
                                 <span>
-                                    ${escapeHTML(item)}
+                                    ${escapeHTML(
+                                        pattern
+                                    )}
                                 </span>
 
                                 ${audioButton(
-                                    item,
+                                    pattern,
                                     "Satzmuster anhören"
                                 )}
 
@@ -1046,6 +926,7 @@ function buildTopicHTML(topic) {
             }
 
 
+
             ${
                 examples.length
                 ?
@@ -1060,16 +941,18 @@ function buildTopicHTML(topic) {
                     <div class="example-list">
 
                         ${examples.map(
-                            item => `
+                            example => `
 
                             <div class="example-box">
 
                                 <span>
-                                    ${escapeHTML(item)}
+                                    ${escapeHTML(
+                                        example
+                                    )}
                                 </span>
 
                                 ${audioButton(
-                                    item,
+                                    example,
                                     "Beispiel anhören"
                                 )}
 
@@ -1085,6 +968,7 @@ function buildTopicHTML(topic) {
                 :
                 ""
             }
+
 
 
             ${
@@ -1134,9 +1018,9 @@ function buildTopicHTML(topic) {
 }
 
 
-// ======================================================
-// VOCABULARY PAGE
-// ======================================================
+/* ======================================================
+   VOCABULARY
+====================================================== */
 
 async function loadVocabulary(level) {
 
@@ -1144,7 +1028,6 @@ async function loadVocabulary(level) {
         document.getElementById(
             "vocabularyGrid"
         );
-
 
     if (!grid) {
         return;
@@ -1168,9 +1051,7 @@ async function loadVocabulary(level) {
 
     try {
 
-        if (!supabaseClient) {
-            await connectSupabase();
-        }
+        await connectSupabase();
 
 
         const {
@@ -1211,8 +1092,8 @@ async function loadVocabulary(level) {
 
                     <p>
                         Für ${escapeHTML(level)}
-                        wurden noch keine
-                        veröffentlichten Wörter hinzugefügt.
+                        wurden noch keine Wörter
+                        veröffentlicht.
                     </p>
 
                 </div>
@@ -1220,47 +1101,43 @@ async function loadVocabulary(level) {
             `;
 
             return;
+
         }
 
 
         const categories = {};
 
 
-        data.forEach(
-            word => {
+        data.forEach(word => {
 
-                const category =
-                    word.category ||
-                    "Allgemein";
-
-
-                if (
-                    !categories[category]
-                ) {
-
-                    categories[category] =
-                        [];
-
-                }
+            const category =
+                word.category ||
+                "Allgemein";
 
 
-                categories[category]
-                    .push(word);
-
+            if (!categories[category]) {
+                categories[category] = [];
             }
-        );
+
+
+            categories[category]
+                .push(word);
+
+        });
 
 
         grid.innerHTML = `
 
-            <div class="vocabulary-page-content">
+            <div>
 
                 ${
                     Object.keys(categories)
                         .map(
                             category => `
 
-                            <section class="vocabulary-category">
+                            <section
+                                class="vocabulary-category"
+                            >
 
                                 <h2>
                                     ${escapeHTML(
@@ -1268,15 +1145,14 @@ async function loadVocabulary(level) {
                                     )}
                                 </h2>
 
-                                <div class="vocabulary-grid">
+                                <div
+                                    class="vocabulary-grid"
+                                >
 
                                     ${
                                         categories[category]
                                             .map(
-                                                word =>
-                                                    buildVocabularyCard(
-                                                        word
-                                                    )
+                                                buildVocabularyCard
                                             )
                                             .join("")
                                     }
@@ -1296,10 +1172,7 @@ async function loadVocabulary(level) {
 
     } catch (error) {
 
-        console.error(
-            "Vocabulary error:",
-            error
-        );
+        console.error(error);
 
 
         grid.innerHTML = `
@@ -1312,8 +1185,7 @@ async function loadVocabulary(level) {
 
                 <p>
                     ${escapeHTML(
-                        error.message ||
-                        "Unbekannter Fehler."
+                        error.message
                     )}
                 </p>
 
@@ -1326,9 +1198,9 @@ async function loadVocabulary(level) {
 }
 
 
-// ======================================================
-// VOCABULARY CARD
-// ======================================================
+/* ======================================================
+   VOCABULARY CARD
+====================================================== */
 
 function buildVocabularyCard(word) {
 
@@ -1343,21 +1215,25 @@ function buildVocabularyCard(word) {
 
             <div class="vocabulary-word">
 
-                <span class="vocabulary-article">
-
-                    ${escapeHTML(
-                        word.article || ""
-                    )}
-
-                </span>
+                ${
+                    word.article
+                    ?
+                    `
+                    <span class="vocabulary-article">
+                        ${escapeHTML(
+                            word.article
+                        )}
+                    </span>
+                    `
+                    :
+                    ""
+                }
 
 
                 <strong>
-
                     ${escapeHTML(
                         word.word || ""
                     )}
-
                 </strong>
 
 
@@ -1373,7 +1249,6 @@ function buildVocabularyCard(word) {
                 word.plural
                 ?
                 `
-
                 <div class="vocabulary-plural">
 
                     <span>
@@ -1384,12 +1259,11 @@ function buildVocabularyCard(word) {
                     </span>
 
                     ${audioButton(
-                        `Plural ${word.plural}`,
+                        word.plural,
                         "Plural anhören"
                     )}
 
                 </div>
-
                 `
                 :
                 ""
@@ -1409,15 +1283,12 @@ function buildVocabularyCard(word) {
                 word.example
                 ?
                 `
-
                 <div class="vocabulary-example">
 
                     <span>
-
                         ${escapeHTML(
                             word.example
                         )}
-
                     </span>
 
                     ${audioButton(
@@ -1426,7 +1297,6 @@ function buildVocabularyCard(word) {
                     )}
 
                 </div>
-
                 `
                 :
                 ""
@@ -1437,17 +1307,14 @@ function buildVocabularyCard(word) {
                 word.note
                 ?
                 `
-
                 <div class="vocabulary-note">
 
                     💡
-
                     ${escapeHTML(
                         word.note
                     )}
 
                 </div>
-
                 `
                 :
                 ""
@@ -1460,9 +1327,9 @@ function buildVocabularyCard(word) {
 }
 
 
-// ======================================================
-// GRAMMAR PAGE
-// ======================================================
+/* ======================================================
+   GRAMMAR
+====================================================== */
 
 async function loadGrammar(level) {
 
@@ -1470,7 +1337,6 @@ async function loadGrammar(level) {
         document.getElementById(
             "grammarGrid"
         );
-
 
     if (!grid) {
         return;
@@ -1494,9 +1360,7 @@ async function loadGrammar(level) {
 
     try {
 
-        if (!supabaseClient) {
-            await connectSupabase();
-        }
+        await connectSupabase();
 
 
         const {
@@ -1538,8 +1402,7 @@ async function loadGrammar(level) {
                     <p>
                         Für ${escapeHTML(level)}
                         wurden noch keine
-                        veröffentlichten Grammatikthemen
-                        hinzugefügt.
+                        Grammatikthemen veröffentlicht.
                     </p>
 
                 </div>
@@ -1547,6 +1410,7 @@ async function loadGrammar(level) {
             `;
 
             return;
+
         }
 
 
@@ -1554,12 +1418,13 @@ async function loadGrammar(level) {
 
             <div class="grammar-grid">
 
-                ${data.map(
-                    item =>
-                        buildGrammarCard(
-                            item
+                ${
+                    data
+                        .map(
+                            buildGrammarCard
                         )
-                ).join("")}
+                        .join("")
+                }
 
             </div>
 
@@ -1567,10 +1432,7 @@ async function loadGrammar(level) {
 
     } catch (error) {
 
-        console.error(
-            "Grammar error:",
-            error
-        );
+        console.error(error);
 
 
         grid.innerHTML = `
@@ -1583,8 +1445,7 @@ async function loadGrammar(level) {
 
                 <p>
                     ${escapeHTML(
-                        error.message ||
-                        "Unbekannter Fehler."
+                        error.message
                     )}
                 </p>
 
@@ -1597,9 +1458,9 @@ async function loadGrammar(level) {
 }
 
 
-// ======================================================
-// GRAMMAR CARD
-// ======================================================
+/* ======================================================
+   GRAMMAR CARD
+====================================================== */
 
 function buildGrammarCard(item) {
 
@@ -1608,12 +1469,10 @@ function buildGrammarCard(item) {
             item.key_points
         );
 
-
     const patterns =
         parseArray(
             item.sentence_patterns
         );
-
 
     const examples =
         parseArray(
@@ -1624,7 +1483,6 @@ function buildGrammarCard(item) {
     return `
 
         <article class="grammar-card">
-
 
             <span class="article-category">
                 Grammatik
@@ -1649,7 +1507,6 @@ function buildGrammarCard(item) {
                 item.short_explanation
                 ?
                 `
-
                 <p class="grammar-short">
 
                     ${escapeHTML(
@@ -1657,7 +1514,6 @@ function buildGrammarCard(item) {
                     )}
 
                 </p>
-
                 `
                 :
                 ""
@@ -1668,7 +1524,6 @@ function buildGrammarCard(item) {
                 item.rule_preview
                 ?
                 `
-
                 <div class="grammar-rule">
 
                     <span>
@@ -1685,7 +1540,6 @@ function buildGrammarCard(item) {
                     )}
 
                 </div>
-
                 `
                 :
                 ""
@@ -1696,7 +1550,6 @@ function buildGrammarCard(item) {
                 item.explanation
                 ?
                 `
-
                 <p class="grammar-explanation">
 
                     ${escapeHTML(
@@ -1704,7 +1557,6 @@ function buildGrammarCard(item) {
                     )}
 
                 </p>
-
                 `
                 :
                 ""
@@ -1715,7 +1567,6 @@ function buildGrammarCard(item) {
                 points.length
                 ?
                 `
-
                 <h3>
                     ⭐ Wichtig
                 </h3>
@@ -1739,11 +1590,9 @@ function buildGrammarCard(item) {
 
                         </li>
 
-                    `
-                    ).join("")}
+                    `).join("")}
 
                 </ul>
-
                 `
                 :
                 ""
@@ -1754,7 +1603,6 @@ function buildGrammarCard(item) {
                 patterns.length
                 ?
                 `
-
                 <h3>
                     🧩 Satzmuster
                 </h3>
@@ -1773,17 +1621,14 @@ function buildGrammarCard(item) {
                             </span>
 
                             ${audioButton(
-                                pattern,
-                                "Satzmuster anhören"
+                                pattern
                             )}
 
                         </div>
 
-                    `
-                    ).join("")}
+                    `).join("")}
 
                 </div>
-
                 `
                 :
                 ""
@@ -1794,7 +1639,6 @@ function buildGrammarCard(item) {
                 examples.length
                 ?
                 `
-
                 <h3>
                     💬 Beispiele
                 </h3>
@@ -1813,17 +1657,14 @@ function buildGrammarCard(item) {
                             </span>
 
                             ${audioButton(
-                                example,
-                                "Beispiel anhören"
+                                example
                             )}
 
                         </div>
 
-                    `
-                    ).join("")}
+                    `).join("")}
 
                 </div>
-
                 `
                 :
                 ""
@@ -1834,7 +1675,6 @@ function buildGrammarCard(item) {
                 item.merke
                 ?
                 `
-
                 <div class="merke-box">
 
                     <div class="merke-icon">
@@ -1848,14 +1688,12 @@ function buildGrammarCard(item) {
                         </strong>
 
                         <p>
-
                             ${escapeHTML(
                                 item.merke
                             )}
 
                             ${audioButton(
-                                item.merke,
-                                "Merksatz anhören"
+                                item.merke
                             )}
 
                         </p>
@@ -1863,12 +1701,10 @@ function buildGrammarCard(item) {
                     </div>
 
                 </div>
-
                 `
                 :
                 ""
             }
-
 
         </article>
 
@@ -1877,13 +1713,14 @@ function buildGrammarCard(item) {
 }
 
 
-// ======================================================
-// LEVEL BUTTONS
-// ======================================================
+/* ======================================================
+   LEVEL BUTTONS
+====================================================== */
 
 function setupLevelButtons(
     selector,
-    callback
+    callback,
+    datasetName
 ) {
 
     const buttons =
@@ -1892,46 +1729,48 @@ function setupLevelButtons(
         );
 
 
-    buttons.forEach(
-        button => {
+    buttons.forEach(button => {
 
-            button.addEventListener(
-                "click",
-                async () => {
+        button.addEventListener(
+            "click",
+            async () => {
 
-                    buttons.forEach(
-                        b =>
-                            b.classList.remove(
-                                "active"
-                            )
-                    );
+                buttons.forEach(
+                    other => {
 
-
-                    button.classList.add(
-                        "active"
-                    );
-
-
-                    try {
-
-                        await callback(
-                            button.dataset
+                        other.classList.remove(
+                            "active"
                         );
 
-                    } catch (error) {
-
-                        console.error(
-                            "Level loading error:",
-                            error
+                        other.setAttribute(
+                            "aria-pressed",
+                            "false"
                         );
 
                     }
+                );
 
-                }
-            );
 
-        }
-    );
+                button.classList.add(
+                    "active"
+                );
+
+                button.setAttribute(
+                    "aria-pressed",
+                    "true"
+                );
+
+
+                await callback(
+                    button.dataset[
+                        datasetName
+                    ]
+                );
+
+            }
+        );
+
+    });
 
 
     return buttons;
@@ -1939,22 +1778,15 @@ function setupLevelButtons(
 }
 
 
-// ======================================================
-// INITIALIZE WEBSITE
-// ======================================================
+/* ======================================================
+   INITIALIZE
+====================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     async () => {
 
         try {
-
-            await connectSupabase();
-
-
-            // ==================================================
-            // LERNWELTEN
-            // ==================================================
 
             if (
                 document.getElementById(
@@ -1967,45 +1799,17 @@ document.addEventListener(
             }
 
 
-            // ==================================================
-            // WORTSCHATZ
-            // ==================================================
-
-            const vocabularyGrid =
+            if (
                 document.getElementById(
                     "vocabularyGrid"
+                )
+            ) {
+
+                setupLevelButtons(
+                    "[data-vocab-level]",
+                    loadVocabulary,
+                    "vocabLevel"
                 );
-
-
-            if (vocabularyGrid) {
-
-                const buttons =
-                    setupLevelButtons(
-                        "[data-vocab-level]",
-                        async data => {
-
-                            await loadVocabulary(
-                                data.vocabLevel
-                            );
-
-                        }
-                    );
-
-
-                if (buttons.length) {
-
-                    buttons.forEach(
-                        button => {
-
-                            button.classList.toggle(
-                                "active",
-                                button.dataset.vocabLevel === "A1"
-                            );
-
-                        }
-                    );
-
-                }
 
 
                 await loadVocabulary(
@@ -2015,45 +1819,17 @@ document.addEventListener(
             }
 
 
-            // ==================================================
-            // GRAMMATIK
-            // ==================================================
-
-            const grammarGrid =
+            if (
                 document.getElementById(
                     "grammarGrid"
+                )
+            ) {
+
+                setupLevelButtons(
+                    "[data-grammar-level]",
+                    loadGrammar,
+                    "grammarLevel"
                 );
-
-
-            if (grammarGrid) {
-
-                const buttons =
-                    setupLevelButtons(
-                        "[data-grammar-level]",
-                        async data => {
-
-                            await loadGrammar(
-                                data.grammarLevel
-                            );
-
-                        }
-                    );
-
-
-                if (buttons.length) {
-
-                    buttons.forEach(
-                        button => {
-
-                            button.classList.toggle(
-                                "active",
-                                button.dataset.grammarLevel === "A1"
-                            );
-
-                        }
-                    );
-
-                }
 
 
                 await loadGrammar(
@@ -2062,43 +1838,12 @@ document.addEventListener(
 
             }
 
-
         } catch (error) {
 
             console.error(
-                "DeutschWelt error:",
+                "DeutschWelt:",
                 error
             );
-
-
-            const message =
-                document.querySelector(
-                    ".loading-message"
-                );
-
-
-            if (message) {
-
-                message.innerHTML = `
-
-                    <div class="error-message">
-
-                        <strong>
-                            Verbindung zu den Inhalten fehlgeschlagen.
-                        </strong>
-
-                        <p>
-                            ${escapeHTML(
-                                error.message ||
-                                "Unbekannter Fehler."
-                            )}
-                        </p>
-
-                    </div>
-
-                `;
-
-            }
 
         }
 
