@@ -1,15 +1,14 @@
 // ======================================================
-// DEUTSCHWELT ADMIN
+// DEUTSCHWELT – ADMIN CONTENT MANAGER
 // ======================================================
 
 
 // ======================================================
-// SUPABASE CONFIG
+// SUPABASE CONFIGURATION
 // ======================================================
 
 const ADMIN_SUPABASE_URL =
     "https://llxcyabptsbdtsdhkzkc.supabase.co";
-
 
 const ADMIN_SUPABASE_ANON_KEY =
     "sb_publishable_MKh0z87kMiDAQX3jnaoADQ_-D0_XXd4";
@@ -21,8 +20,7 @@ const ADMIN_SUPABASE_ANON_KEY =
 
 let adminSupabase = null;
 
-let selectedContentType =
-    "topic";
+let selectedContentType = "topic";
 
 
 // ======================================================
@@ -32,48 +30,36 @@ let selectedContentType =
 function createAdminSupabase() {
 
     if (
-        typeof window.supabase ===
-        "undefined"
+        typeof window.supabase === "undefined" ||
+        typeof window.supabase.createClient !== "function"
     ) {
-
         throw new Error(
-            "Supabase library was not loaded."
+            "Supabase konnte nicht geladen werden. Bitte prüfe das Supabase-Script in admin.html."
         );
-
     }
-
 
     if (
-        ADMIN_SUPABASE_URL.includes(
-            "PASTE_YOUR"
-        )
+        !ADMIN_SUPABASE_URL ||
+        ADMIN_SUPABASE_URL.includes("PASTE_YOUR")
     ) {
-
         throw new Error(
-            "Supabase URL has not been entered."
+            "Die Supabase-URL wurde nicht korrekt eingetragen."
         );
-
     }
-
 
     if (
-        ADMIN_SUPABASE_ANON_KEY.includes(
-            "PASTE_YOUR"
-        )
+        !ADMIN_SUPABASE_ANON_KEY ||
+        ADMIN_SUPABASE_ANON_KEY.includes("PASTE_YOUR")
     ) {
-
         throw new Error(
-            "Supabase public key has not been entered."
+            "Der Supabase-Public-Key wurde nicht korrekt eingetragen."
         );
-
     }
 
-
-    adminSupabase =
-        window.supabase.createClient(
-            ADMIN_SUPABASE_URL,
-            ADMIN_SUPABASE_ANON_KEY
-        );
+    adminSupabase = window.supabase.createClient(
+        ADMIN_SUPABASE_URL,
+        ADMIN_SUPABASE_ANON_KEY
+    );
 
 }
 
@@ -88,23 +74,15 @@ function showMessage(
     type = "info"
 ) {
 
-    const element =
-        document.getElementById(
-            elementId
-        );
-
+    const element = document.getElementById(elementId);
 
     if (!element) {
         return;
     }
 
+    element.textContent = message;
 
-    element.textContent =
-        message;
-
-
-    element.className =
-        `admin-message ${type}`;
+    element.className = `admin-message ${type}`;
 
 }
 
@@ -118,21 +96,23 @@ async function loginAdmin(
     password
 ) {
 
+    if (!adminSupabase) {
+        throw new Error(
+            "Supabase ist noch nicht bereit."
+        );
+    }
+
     const {
         data,
         error
-    } =
-        await adminSupabase.auth
-            .signInWithPassword({
-                email,
-                password
-            });
-
+    } = await adminSupabase.auth.signInWithPassword({
+        email,
+        password
+    });
 
     if (error) {
         throw error;
     }
-
 
     return data;
 
@@ -145,79 +125,73 @@ async function loginAdmin(
 
 async function checkSession() {
 
+    if (!adminSupabase) {
+        return;
+    }
+
     const {
         data,
         error
-    } =
-        await adminSupabase.auth
-            .getSession();
-
+    } = await adminSupabase.auth.getSession();
 
     if (error) {
         throw error;
     }
 
-
     if (
         data &&
         data.session
     ) {
-
         showAdminPanel();
-
+    } else {
+        showLoginPanel();
     }
 
 }
 
 
 // ======================================================
-// SHOW ADMIN
+// SHOW ADMIN PANEL
 // ======================================================
 
 function showAdminPanel() {
 
-    document
-        .getElementById(
-            "adminLogin"
-        )
-        .classList.add(
-            "hidden"
-        );
+    const loginPanel =
+        document.getElementById("adminLogin");
 
+    const adminPanel =
+        document.getElementById("adminPanel");
 
-    document
-        .getElementById(
-            "adminPanel"
-        )
-        .classList.remove(
-            "hidden"
-        );
+    if (loginPanel) {
+        loginPanel.classList.add("hidden");
+    }
+
+    if (adminPanel) {
+        adminPanel.classList.remove("hidden");
+    }
 
 }
 
 
 // ======================================================
-// SHOW LOGIN
+// SHOW LOGIN PANEL
 // ======================================================
 
 function showLoginPanel() {
 
-    document
-        .getElementById(
-            "adminLogin"
-        )
-        .classList.remove(
-            "hidden"
-        );
+    const loginPanel =
+        document.getElementById("adminLogin");
 
+    const adminPanel =
+        document.getElementById("adminPanel");
 
-    document
-        .getElementById(
-            "adminPanel"
-        )
-        .classList.add(
-            "hidden"
-        );
+    if (loginPanel) {
+        loginPanel.classList.remove("hidden");
+    }
+
+    if (adminPanel) {
+        adminPanel.classList.add("hidden");
+    }
 
 }
 
@@ -226,96 +200,161 @@ function showLoginPanel() {
 // SWITCH CONTENT TYPE
 // ======================================================
 
-function switchContentType(
-    type
-) {
+function switchContentType(type) {
 
-    selectedContentType =
-        type;
-
+    selectedContentType = type;
 
     document
-        .querySelectorAll(
-            ".content-type-button"
-        )
-        .forEach(
-            button => {
+        .querySelectorAll(".content-type-button")
+        .forEach(button => {
 
-                button.classList.toggle(
-                    "active",
-                    button.dataset.contentType ===
-                    type
-                );
+            const isActive =
+                button.dataset.contentType === type;
 
-            }
-        );
+            button.classList.toggle(
+                "active",
+                isActive
+            );
+
+            button.setAttribute(
+                "aria-selected",
+                String(isActive)
+            );
+
+        });
 
 
-    document
-        .getElementById(
-            "topicForm"
-        )
-        .classList.toggle(
+    const topicForm =
+        document.getElementById("topicForm");
+
+    const vocabularyForm =
+        document.getElementById("vocabularyForm");
+
+    const grammarForm =
+        document.getElementById("grammarForm");
+
+    const categoryField =
+        document.getElementById("categoryField");
+
+
+    if (topicForm) {
+        topicForm.classList.toggle(
             "hidden",
             type !== "topic"
         );
+    }
 
-
-    document
-        .getElementById(
-            "vocabularyForm"
-        )
-        .classList.toggle(
+    if (vocabularyForm) {
+        vocabularyForm.classList.toggle(
             "hidden",
             type !== "vocabulary"
         );
+    }
 
-
-    document
-        .getElementById(
-            "grammarForm"
-        )
-        .classList.toggle(
+    if (grammarForm) {
+        grammarForm.classList.toggle(
             "hidden",
             type !== "grammar"
         );
+    }
 
-
-    document
-        .getElementById(
-            "categoryField"
-        )
-        .classList.toggle(
+    if (categoryField) {
+        categoryField.classList.toggle(
             "hidden",
             type === "grammar"
         );
+    }
+
+    clearMessage("saveMessage");
 
 }
 
 
 // ======================================================
-// TEXT → ARRAY
+// CLEAR MESSAGE
 // ======================================================
 
-function linesToArray(
-    value
-) {
+function clearMessage(elementId) {
+
+    const element =
+        document.getElementById(elementId);
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent = "";
+
+    element.className = "admin-message";
+
+}
+
+
+// ======================================================
+// TEXT TO ARRAY
+// ======================================================
+
+function linesToArray(value) {
 
     if (!value) {
         return [];
     }
 
-
     return value
         .split("\n")
-        .map(
-            item =>
-                item.trim()
-        )
-        .filter(
-            item =>
-                item.length > 0
+        .map(item => item.trim())
+        .filter(item => item.length > 0);
+
+}
+
+
+// ======================================================
+// GET COMMON FORM DATA
+// ======================================================
+
+function getCommonFormData() {
+
+    const level =
+        document.getElementById("contentLevel").value;
+
+    const category =
+        document.getElementById("category").value.trim();
+
+    const sortOrder =
+        Number(
+            document.getElementById("sortOrder").value
         );
+
+    if (!level) {
+        throw new Error(
+            "Bitte ein Niveau auswählen."
+        );
+    }
+
+    if (
+        selectedContentType !== "grammar" &&
+        !category
+    ) {
+        throw new Error(
+            "Bitte eine Kategorie eingeben."
+        );
+    }
+
+    if (
+        !Number.isFinite(sortOrder) ||
+        sortOrder < 1
+    ) {
+        throw new Error(
+            "Bitte eine gültige Sortierung eingeben."
+        );
+    }
+
+    return {
+        level,
+        category,
+        sort_order: sortOrder,
+        published: true
+    };
 
 }
 
@@ -326,17 +365,12 @@ function linesToArray(
 
 async function saveTopic() {
 
+    const commonData =
+        getCommonFormData();
+
     const row = {
 
-        level:
-            document.getElementById(
-                "contentLevel"
-            ).value,
-
-        category:
-            document.getElementById(
-                "category"
-            ).value.trim(),
+        ...commonData,
 
         title:
             document.getElementById(
@@ -387,37 +421,29 @@ async function saveTopic() {
         image_url:
             document.getElementById(
                 "topicImage"
-            ).value.trim() || null,
-
-        sort_order:
-            Number(
-                document.getElementById(
-                    "sortOrder"
-                ).value
-            ),
-
-        published:
-            true
+            ).value.trim() || null
 
     };
 
 
     if (!row.title) {
-
         throw new Error(
-            "Bitte einen Titel eingeben."
+            "Bitte einen Topic-Titel eingeben."
         );
+    }
 
+    if (!row.explanation) {
+        throw new Error(
+            "Bitte eine Erklärung eingeben."
+        );
     }
 
 
     const {
         error
-    } =
-        await adminSupabase
-            .from("topics")
-            .insert(row);
-
+    } = await adminSupabase
+        .from("topics")
+        .insert(row);
 
     if (error) {
         throw error;
@@ -432,17 +458,12 @@ async function saveTopic() {
 
 async function saveVocabulary() {
 
+    const commonData =
+        getCommonFormData();
+
     const row = {
 
-        level:
-            document.getElementById(
-                "contentLevel"
-            ).value,
-
-        category:
-            document.getElementById(
-                "category"
-            ).value.trim(),
+        ...commonData,
 
         word:
             document.getElementById(
@@ -477,46 +498,29 @@ async function saveVocabulary() {
         image_url:
             document.getElementById(
                 "vocabImage"
-            ).value.trim() || null,
-
-        sort_order:
-            Number(
-                document.getElementById(
-                    "sortOrder"
-                ).value
-            ),
-
-        published:
-            true
+            ).value.trim() || null
 
     };
 
 
     if (!row.word) {
-
         throw new Error(
             "Bitte ein Wort eingeben."
         );
-
     }
 
-
     if (!row.meaning) {
-
         throw new Error(
             "Bitte eine Bedeutung eingeben."
         );
-
     }
 
 
     const {
         error
-    } =
-        await adminSupabase
-            .from("vocabulary")
-            .insert(row);
-
+    } = await adminSupabase
+        .from("vocabulary")
+        .insert(row);
 
     if (error) {
         throw error;
@@ -531,12 +535,13 @@ async function saveVocabulary() {
 
 async function saveGrammar() {
 
+    const commonData =
+        getCommonFormData();
+
     const row = {
 
         level:
-            document.getElementById(
-                "contentLevel"
-            ).value,
+            commonData.level,
 
         title:
             document.getElementById(
@@ -590,11 +595,7 @@ async function saveGrammar() {
             ).value.trim() || null,
 
         sort_order:
-            Number(
-                document.getElementById(
-                    "sortOrder"
-                ).value
-            ),
+            commonData.sort_order,
 
         published:
             true
@@ -603,21 +604,23 @@ async function saveGrammar() {
 
 
     if (!row.title) {
-
         throw new Error(
             "Bitte einen Grammatik-Titel eingeben."
         );
+    }
 
+    if (!row.explanation) {
+        throw new Error(
+            "Bitte eine Erklärung eingeben."
+        );
     }
 
 
     const {
         error
-    } =
-        await adminSupabase
-            .from("grammar_topics")
-            .insert(row);
-
+    } = await adminSupabase
+        .from("grammar_topics")
+        .insert(row);
 
     if (error) {
         throw error;
@@ -627,40 +630,39 @@ async function saveGrammar() {
 
 
 // ======================================================
-// CLEAR FORM
+// CLEAR CONTENT FORM
 // ======================================================
 
 function clearContentForm() {
 
-    document
-        .getElementById(
-            "contentForm"
-        )
-        .reset();
+    const contentForm =
+        document.getElementById("contentForm");
+
+    if (!contentForm) {
+        return;
+    }
+
+    contentForm.reset();
 
 
-    document
-        .getElementById(
-            "contentLevel"
-        )
-        .value =
-        "A1";
+    document.getElementById(
+        "contentLevel"
+    ).value = "A1";
 
 
-    document
-        .getElementById(
-            "sortOrder"
-        )
-        .value =
-        "1";
+    document.getElementById(
+        "sortOrder"
+    ).value = "1";
 
 
-    document
-        .getElementById(
-            "vocabArticle"
-        )
-        .value =
-        "";
+    document.getElementById(
+        "vocabArticle"
+    ).value = "";
+
+
+    switchContentType(
+        selectedContentType
+    );
 
 }
 
@@ -669,23 +671,43 @@ function clearContentForm() {
 // LOGIN EVENT
 // ======================================================
 
-async function handleLogin(
-    event
-) {
+async function handleLogin(event) {
 
     event.preventDefault();
-
 
     const email =
         document.getElementById(
             "loginEmail"
         ).value.trim();
 
-
     const password =
         document.getElementById(
             "loginPassword"
         ).value;
+
+
+    if (!email || !password) {
+
+        showMessage(
+            "loginMessage",
+            "Bitte E-Mail und Passwort eingeben.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const loginButton =
+        document.querySelector(
+            "#loginForm button[type='submit']"
+        );
+
+
+    if (loginButton) {
+        loginButton.disabled = true;
+        loginButton.textContent = "Anmeldung läuft ...";
+    }
 
 
     try {
@@ -716,6 +738,7 @@ async function handleLogin(
     } catch (error) {
 
         console.error(
+            "Login error:",
             error
         );
 
@@ -723,9 +746,16 @@ async function handleLogin(
         showMessage(
             "loginMessage",
             "Anmeldung fehlgeschlagen: " +
-                error.message,
+                getReadableError(error),
             "error"
         );
+
+    } finally {
+
+        if (loginButton) {
+            loginButton.disabled = false;
+            loginButton.textContent = "Anmelden";
+        }
 
     }
 
@@ -736,9 +766,7 @@ async function handleLogin(
 // SAVE EVENT
 // ======================================================
 
-async function handleSave(
-    event
-) {
+async function handleSave(event) {
 
     event.preventDefault();
 
@@ -749,42 +777,40 @@ async function handleSave(
         );
 
 
-    button.disabled =
-        true;
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Speichern läuft ...";
+    }
 
 
-    button.textContent =
-        "Speichern ...";
+    clearMessage("saveMessage");
 
 
     try {
 
         if (
-            selectedContentType ===
-            "topic"
+            selectedContentType === "topic"
         ) {
 
             await saveTopic();
 
-        }
-
-
-        else if (
-            selectedContentType ===
-            "vocabulary"
+        } else if (
+            selectedContentType === "vocabulary"
         ) {
 
             await saveVocabulary();
 
-        }
-
-
-        else if (
-            selectedContentType ===
-            "grammar"
+        } else if (
+            selectedContentType === "grammar"
         ) {
 
             await saveGrammar();
+
+        } else {
+
+            throw new Error(
+                "Unbekannter Inhaltstyp."
+            );
 
         }
 
@@ -794,7 +820,7 @@ async function handleSave(
 
         showMessage(
             "saveMessage",
-            "✅ Erfolgreich in Supabase gespeichert. Der nächste Google-Sheets-Backup-Lauf übernimmt den neuen Inhalt.",
+            "Erfolgreich in Supabase gespeichert. Der nächste Google-Sheets-Backup-Lauf übernimmt den neuen Inhalt.",
             "success"
         );
 
@@ -809,20 +835,19 @@ async function handleSave(
 
         showMessage(
             "saveMessage",
-            "❌ Speichern fehlgeschlagen: " +
-                error.message,
+            "Speichern fehlgeschlagen: " +
+                getReadableError(error),
             "error"
         );
 
+    } finally {
+
+        if (button) {
+            button.disabled = false;
+            button.textContent = "💾 Inhalt speichern";
+        }
+
     }
-
-
-    button.disabled =
-        false;
-
-
-    button.textContent =
-        "💾 Inhalt speichern";
 
 }
 
@@ -833,16 +858,43 @@ async function handleSave(
 
 async function logout() {
 
+    if (!adminSupabase) {
+        showLoginPanel();
+        return;
+    }
+
+
     try {
 
-        await adminSupabase.auth.signOut();
+        const {
+            error
+        } = await adminSupabase.auth.signOut();
+
+        if (error) {
+            throw error;
+        }
 
         showLoginPanel();
+
+        showMessage(
+            "loginMessage",
+            "Du wurdest erfolgreich abgemeldet.",
+            "success"
+        );
+
 
     } catch (error) {
 
         console.error(
+            "Logout error:",
             error
+        );
+
+        showMessage(
+            "saveMessage",
+            "Abmelden fehlgeschlagen: " +
+                getReadableError(error),
+            "error"
         );
 
     }
@@ -851,7 +903,56 @@ async function logout() {
 
 
 // ======================================================
-// INITIALIZE
+// READABLE ERROR MESSAGE
+// ======================================================
+
+function getReadableError(error) {
+
+    if (!error) {
+        return "Unbekannter Fehler.";
+    }
+
+    const message =
+        error.message || String(error);
+
+    if (
+        message.includes("Invalid login credentials")
+    ) {
+        return "E-Mail oder Passwort ist falsch.";
+    }
+
+    if (
+        message.includes("Email not confirmed")
+    ) {
+        return "Bitte bestätige zuerst deine E-Mail-Adresse.";
+    }
+
+    if (
+        message.includes("row-level security")
+    ) {
+        return "Speichern wurde durch die Supabase-Berechtigungen blockiert. Bitte prüfe die RLS-Regeln der Tabelle.";
+    }
+
+    if (
+        message.includes("column") &&
+        message.includes("does not exist")
+    ) {
+        return "Eine Spalte in Supabase wurde nicht gefunden. Bitte prüfe die Tabellenspalten.";
+    }
+
+    if (
+        message.includes("duplicate key")
+    ) {
+        return "Dieser Inhalt existiert möglicherweise bereits.";
+    }
+
+    return message;
+
+}
+
+
+// ======================================================
+// INITIALIZE ADMIN PAGE
 // ======================================================
 
 document.addEventListener(
@@ -863,61 +964,57 @@ document.addEventListener(
             createAdminSupabase();
 
 
-            document
-                .getElementById(
-                    "loginForm"
-                )
-                .addEventListener(
+            const loginForm =
+                document.getElementById("loginForm");
+
+            const contentForm =
+                document.getElementById("contentForm");
+
+            const logoutButton =
+                document.getElementById("logoutButton");
+
+
+            if (loginForm) {
+                loginForm.addEventListener(
                     "submit",
                     handleLogin
                 );
+            }
 
-
-            document
-                .getElementById(
-                    "contentForm"
-                )
-                .addEventListener(
+            if (contentForm) {
+                contentForm.addEventListener(
                     "submit",
                     handleSave
                 );
+            }
 
-
-            document
-                .getElementById(
-                    "logoutButton"
-                )
-                .addEventListener(
+            if (logoutButton) {
+                logoutButton.addEventListener(
                     "click",
                     logout
                 );
+            }
 
 
             document
-                .querySelectorAll(
-                    ".content-type-button"
-                )
-                .forEach(
-                    button => {
+                .querySelectorAll(".content-type-button")
+                .forEach(button => {
 
-                        button.addEventListener(
-                            "click",
-                            () => {
+                    button.addEventListener(
+                        "click",
+                        () => {
 
-                                switchContentType(
-                                    button.dataset.contentType
-                                );
+                            switchContentType(
+                                button.dataset.contentType
+                            );
 
-                            }
-                        );
+                        }
+                    );
 
-                    }
-                );
+                });
 
 
-            switchContentType(
-                "topic"
-            );
+            switchContentType("topic");
 
 
             await checkSession();
@@ -930,10 +1027,9 @@ document.addEventListener(
                 error
             );
 
-
             showMessage(
                 "loginMessage",
-                error.message,
+                getReadableError(error),
                 "error"
             );
 
