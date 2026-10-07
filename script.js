@@ -1588,6 +1588,1004 @@ function setupLevelButtons() {
 
 }
 
+/* =========================================================
+   GLOBAL SEARCH
+   ========================================================= */
+
+let searchData = [];
+let searchLoaded = false;
+let searchLoading = false;
+
+
+/* ---------------------------------------------------------
+   SEARCH UI
+   --------------------------------------------------------- */
+
+function createGlobalSearch() {
+
+    if (
+        document.body.classList.contains("admin-page") ||
+        document.getElementById("globalSearchButton")
+    ) {
+        return;
+    }
+
+    const headerInner =
+        document.querySelector(".header-inner");
+
+    if (!headerInner) {
+        return;
+    }
+
+
+    /* Search button */
+
+    const searchButton =
+        document.createElement("button");
+
+    searchButton.type = "button";
+    searchButton.id = "globalSearchButton";
+    searchButton.className = "global-search-button";
+
+    searchButton.innerHTML = `
+        <span class="global-search-icon">🔍</span>
+        <span class="global-search-text">Suchen</span>
+    `;
+
+    searchButton.setAttribute(
+        "aria-label",
+        "DEUTSCHWELT durchsuchen"
+    );
+
+
+    /* Put search button before Kontakt */
+
+    const contact =
+        headerInner.querySelector(".header-contact");
+
+    if (contact) {
+        headerInner.insertBefore(
+            searchButton,
+            contact
+        );
+    } else {
+        headerInner.appendChild(
+            searchButton
+        );
+    }
+
+
+    /* Search overlay */
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.id = "globalSearchOverlay";
+    overlay.className = "global-search-overlay";
+
+    overlay.innerHTML = `
+
+        <div
+            class="global-search-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="globalSearchTitle"
+        >
+
+            <div class="global-search-header">
+
+                <div>
+                    <span class="eyebrow">
+                        DEUTSCHWELT
+                    </span>
+
+                    <h2 id="globalSearchTitle">
+                        🔍 Suche
+                    </h2>
+
+                    <p>
+                        Suche nach Wörtern, Grammatik
+                        oder Lernthemen.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="global-search-close"
+                    id="globalSearchClose"
+                    aria-label="Suche schließen"
+                >
+                    ✕
+                </button>
+
+            </div>
+
+
+            <div class="global-search-input-wrapper">
+
+                <span>🔍</span>
+
+                <input
+                    type="search"
+                    id="globalSearchInput"
+                    placeholder="z. B. Arbeit, Passiv, Familie, CAN ..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div
+                id="globalSearchStatus"
+                class="global-search-status"
+            >
+                Suche starten ...
+            </div>
+
+
+            <div
+                id="globalSearchResults"
+                class="global-search-results"
+            ></div>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    /* Open */
+
+    searchButton.addEventListener(
+        "click",
+        openGlobalSearch
+    );
+
+
+    /* Close */
+
+    document
+        .getElementById("globalSearchClose")
+        .addEventListener(
+            "click",
+            closeGlobalSearch
+        );
+
+
+    /* Click outside */
+
+    overlay.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target === overlay
+            ) {
+                closeGlobalSearch();
+            }
+
+        }
+    );
+
+
+    /* Search */
+
+    const input =
+        document.getElementById(
+            "globalSearchInput"
+        );
+
+    input.addEventListener(
+        "input",
+        debounce(
+            performGlobalSearch,
+            250
+        )
+    );
+
+
+    /* ESC */
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape" &&
+                overlay.classList.contains("open")
+            ) {
+                closeGlobalSearch();
+            }
+
+        }
+    );
+
+}
+
+
+function openGlobalSearch() {
+
+    const overlay =
+        document.getElementById(
+            "globalSearchOverlay"
+        );
+
+    const input =
+        document.getElementById(
+            "globalSearchInput"
+        );
+
+    if (!overlay) {
+        return;
+    }
+
+    overlay.classList.add("open");
+
+    document.body.classList.add(
+        "search-open"
+    );
+
+
+    if (input) {
+
+        input.value = "";
+
+        setTimeout(
+            () => input.focus(),
+            100
+        );
+
+    }
+
+
+    const results =
+        document.getElementById(
+            "globalSearchResults"
+        );
+
+    if (results) {
+        results.innerHTML = "";
+    }
+
+
+    const status =
+        document.getElementById(
+            "globalSearchStatus"
+        );
+
+    if (status) {
+        status.textContent =
+            "Suchbegriff eingeben ...";
+    }
+
+
+    loadGlobalSearchData();
+
+}
+
+
+function closeGlobalSearch() {
+
+    const overlay =
+        document.getElementById(
+            "globalSearchOverlay"
+        );
+
+    if (!overlay) {
+        return;
+    }
+
+    overlay.classList.remove("open");
+
+    document.body.classList.remove(
+        "search-open"
+    );
+
+}
+
+
+/* ---------------------------------------------------------
+   DEBOUNCE
+   --------------------------------------------------------- */
+
+function debounce(
+    functionToCall,
+    delay
+) {
+
+    let timer;
+
+    return function (...args) {
+
+        clearTimeout(timer);
+
+        timer = setTimeout(
+            () => {
+                functionToCall.apply(
+                    this,
+                    args
+                );
+            },
+            delay
+        );
+
+    };
+
+}
+
+
+/* ---------------------------------------------------------
+   LOAD ALL SEARCH DATA
+   --------------------------------------------------------- */
+
+async function loadGlobalSearchData() {
+
+    if (searchLoaded) {
+        return;
+    }
+
+    if (searchLoading) {
+        return;
+    }
+
+    searchLoading = true;
+
+
+    const status =
+        document.getElementById(
+            "globalSearchStatus"
+        );
+
+
+    if (status) {
+        status.textContent =
+            "Alle Lerninhalte werden geladen ...";
+    }
+
+
+    try {
+
+        await connectSupabase();
+
+
+        const [
+            topicsResult,
+            vocabularyResult,
+            grammarResult
+        ] =
+            await Promise.all([
+
+                supabaseClient
+                    .from("topics")
+                    .select("*")
+                    .eq("published", true),
+
+                supabaseClient
+                    .from("vocabulary")
+                    .select("*")
+                    .eq("published", true),
+
+                supabaseClient
+                    .from("grammar_topics")
+                    .select("*")
+                    .eq("published", true)
+
+            ]);
+
+
+        if (topicsResult.error) {
+            throw topicsResult.error;
+        }
+
+        if (vocabularyResult.error) {
+            throw vocabularyResult.error;
+        }
+
+        if (grammarResult.error) {
+            throw grammarResult.error;
+        }
+
+
+        searchData = [];
+
+
+        /* Lernwelten */
+
+        (topicsResult.data || [])
+            .forEach(item => {
+
+                searchData.push({
+
+                    type: "topic",
+
+                    level:
+                        item.level || "",
+
+                    title:
+                        item.title || "Lernthema",
+
+                    category:
+                        item.category || "Lernwelt",
+
+                    icon:
+                        item.icon || "📘",
+
+                    data:
+                        item
+
+                });
+
+            });
+
+
+        /* Wortschatz */
+
+        (vocabularyResult.data || [])
+            .forEach(item => {
+
+                searchData.push({
+
+                    type: "vocabulary",
+
+                    level:
+                        item.level || "",
+
+                    title:
+                        item.word || "Wort",
+
+                    category:
+                        item.category || "Wortschatz",
+
+                    icon:
+                        "📖",
+
+                    data:
+                        item
+
+                });
+
+            });
+
+
+        /* Grammatik */
+
+        (grammarResult.data || [])
+            .forEach(item => {
+
+                searchData.push({
+
+                    type: "grammar",
+
+                    level:
+                        item.level || "",
+
+                    title:
+                        item.title || "Grammatik",
+
+                    category:
+                        "Grammatik",
+
+                    icon:
+                        "📚",
+
+                    data:
+                        item
+
+                });
+
+            });
+
+
+        searchLoaded = true;
+
+
+        if (status) {
+
+            status.textContent =
+                `${searchData.length} Lerninhalte bereit.`;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Global search loading error:",
+            error
+        );
+
+
+        if (status) {
+
+            status.textContent =
+                "Die Lerninhalte konnten nicht geladen werden.";
+
+        }
+
+    } finally {
+
+        searchLoading = false;
+
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   SEARCH
+   --------------------------------------------------------- */
+
+async function performGlobalSearch() {
+
+    await loadGlobalSearchData();
+
+
+    const input =
+        document.getElementById(
+            "globalSearchInput"
+        );
+
+    const resultsContainer =
+        document.getElementById(
+            "globalSearchResults"
+        );
+
+    const status =
+        document.getElementById(
+            "globalSearchStatus"
+        );
+
+
+    if (!input || !resultsContainer) {
+        return;
+    }
+
+
+    const query =
+        input.value
+            .trim()
+            .toLowerCase();
+
+
+    resultsContainer.innerHTML = "";
+
+
+    if (!query) {
+
+        if (status) {
+            status.textContent =
+                "Suchbegriff eingeben ...";
+        }
+
+        return;
+    }
+
+
+    /*
+     * Search through the complete Supabase row.
+     *
+     * This means the search also checks:
+     * title
+     * word
+     * meaning
+     * explanation
+     * examples
+     * key_points
+     * sentence_patterns
+     * notes
+     * rules
+     * and other existing fields.
+     */
+
+    const terms =
+        query
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    const matches =
+        searchData.filter(
+            item => {
+
+                const searchableText =
+                    JSON.stringify(
+                        item.data
+                    )
+                    .toLowerCase();
+
+
+                /*
+                 * Every word entered by the user
+                 * must be found somewhere in
+                 * the complete content.
+                 */
+
+                return terms.every(
+                    term =>
+                        searchableText.includes(
+                            term
+                        )
+                );
+
+            }
+        );
+
+
+    if (status) {
+
+        status.textContent =
+            matches.length === 1
+                ? "1 Ergebnis gefunden."
+                : `${matches.length} Ergebnisse gefunden.`;
+
+    }
+
+
+    if (!matches.length) {
+
+        resultsContainer.innerHTML = `
+
+            <div class="global-search-empty">
+
+                <div>
+                    🔎
+                </div>
+
+                <h3>
+                    Keine Ergebnisse
+                </h3>
+
+                <p>
+                    Versuche einen anderen Suchbegriff,
+                    zum Beispiel „Arbeit“, „Passiv“
+                    oder „Familie“.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    /* Group results */
+
+    const groups = {
+
+        topic: {
+            title: "📘 Lernwelten",
+            items: []
+        },
+
+        vocabulary: {
+            title: "📖 Wortschatz",
+            items: []
+        },
+
+        grammar: {
+            title: "📚 Grammatik",
+            items: []
+        }
+
+    };
+
+
+    matches.forEach(
+        item => {
+
+            if (groups[item.type]) {
+                groups[item.type].items.push(
+                    item
+                );
+            }
+
+        }
+    );
+
+
+    Object.values(groups)
+        .forEach(group => {
+
+            if (!group.items.length) {
+                return;
+            }
+
+
+            const section =
+                document.createElement(
+                    "section"
+                );
+
+            section.className =
+                "global-search-group";
+
+
+            const heading =
+                document.createElement(
+                    "h3"
+                );
+
+            heading.textContent =
+                group.title;
+
+
+            section.appendChild(
+                heading
+            );
+
+
+            group.items.forEach(
+                item => {
+
+                    section.appendChild(
+                        createSearchResult(
+                            item
+                        )
+                    );
+
+                }
+            );
+
+
+            resultsContainer.appendChild(
+                section
+            );
+
+        });
+
+}
+
+
+/* ---------------------------------------------------------
+   SEARCH RESULT
+   --------------------------------------------------------- */
+
+function createSearchResult(item) {
+
+    const result =
+        document.createElement(
+            "article"
+        );
+
+    result.className =
+        "global-search-result";
+
+
+    result.innerHTML = `
+
+        <div class="search-result-top">
+
+            <span class="search-result-icon">
+                ${escapeHTML(item.icon)}
+            </span>
+
+            <div class="search-result-main">
+
+                <div class="search-result-meta">
+
+                    <span>
+                        ${escapeHTML(
+                            item.level || ""
+                        )}
+                    </span>
+
+                    <span>
+                        ${escapeHTML(
+                            item.category || ""
+                        )}
+                    </span>
+
+                </div>
+
+                <h4>
+                    ${escapeHTML(
+                        item.title
+                    )}
+                </h4>
+
+            </div>
+
+            <span class="search-result-arrow">
+                →
+            </span>
+
+        </div>
+
+        <div
+            class="search-result-content"
+        ></div>
+
+    `;
+
+
+    result.addEventListener(
+        "click",
+        () => {
+
+            const content =
+                result.querySelector(
+                    ".search-result-content"
+                );
+
+            const alreadyOpen =
+                result.classList.contains(
+                    "expanded"
+                );
+
+
+            /* Close all other results */
+
+            document
+                .querySelectorAll(
+                    ".global-search-result.expanded"
+                )
+                .forEach(
+                    other => {
+
+                        if (
+                            other !== result
+                        ) {
+
+                            other.classList.remove(
+                                "expanded"
+                            );
+
+                            const otherContent =
+                                other.querySelector(
+                                    ".search-result-content"
+                                );
+
+                            if (otherContent) {
+                                otherContent.innerHTML =
+                                    "";
+                            }
+
+                        }
+
+                    }
+                );
+
+
+            if (alreadyOpen) {
+
+                result.classList.remove(
+                    "expanded"
+                );
+
+                content.innerHTML = "";
+
+                return;
+            }
+
+
+            result.classList.add(
+                "expanded"
+            );
+
+
+            /*
+             * Show the COMPLETE existing content.
+             */
+
+            if (item.type === "topic") {
+
+                content.innerHTML =
+                    buildTopicHTML(
+                        item.data
+                    );
+
+            }
+
+            else if (
+                item.type === "vocabulary"
+            ) {
+
+                content.innerHTML = `
+
+                    <div class="search-full-content">
+
+                        ${buildVocabularyCard(
+                            item.data
+                        )}
+
+                    </div>
+
+                `;
+
+            }
+
+            else if (
+                item.type === "grammar"
+            ) {
+
+                content.innerHTML = `
+
+                    <div class="search-full-content">
+
+                        ${buildGrammarCard(
+                            item.data
+                        )}
+
+                    </div>
+
+                `;
+
+            }
+
+
+            /*
+             * Keep result visible.
+             */
+
+            setTimeout(
+                () => {
+
+                    result.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest"
+                    });
+
+                },
+                50
+            );
+
+        }
+    );
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        createGlobalSearch();
+
+        loadLearningPage();
+
+        setupLevelButtons();
+
+
+        const vocabButton =
+            document.querySelector(
+                "[data-vocab-level].active"
+            );
+
+        if (vocabButton) {
+
+            loadVocabulary(
+                vocabButton.dataset.vocabLevel
+            );
+
+        }
+
+
+        const grammarButton =
+            document.querySelector(
+                "[data-grammar-level].active"
+            );
+
+        if (grammarButton) {
+
+            loadGrammar(
+                grammarButton.dataset.grammarLevel
+            );
+
+        }
+
+    }
+);
 
 /* =========================================================
    INITIALIZATION
