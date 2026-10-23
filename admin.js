@@ -200,6 +200,9 @@ function switchContentType(type) {
             "hidden",
             type === "grammar"
         );
+    document
+    .getElementById("sprechenForm")
+    .classList.toggle("hidden", type !== "sprechen");
 
 }
 
@@ -249,6 +252,7 @@ async function saveTopic() {
     const row = {
 
         level:
+            content_type: "lesson",
             document.getElementById("contentLevel").value,
 
         category:
@@ -291,6 +295,7 @@ async function saveTopic() {
             getSortOrder(),
 
         published: true
+        
 
     };
 
@@ -470,6 +475,129 @@ async function saveGrammar() {
 
 }
 
+function parseSpeakingPhrases(value) {
+    const categories = [];
+    let currentCategory = "Allgemeine Redemittel";
+
+    (value || "").split("\n").forEach(line => {
+        const trimmed = line.trim();
+
+        if (!trimmed) return;
+
+        if (/^Category\s*:/i.test(trimmed)) {
+            currentCategory = trimmed.replace(/^Category\s*:/i, "").trim()
+                || "Allgemeine Redemittel";
+
+            if (!categories.some(c => c.category === currentCategory)) {
+                categories.push({
+                    category: currentCategory,
+                    phrases: []
+                });
+            }
+            return;
+        }
+
+        const separator = trimmed.indexOf("|");
+
+        if (separator === -1) {
+            throw new Error(
+                'Jede Redewendung braucht eine Übersetzung: Deutsch | Englisch. Fehler: ' +
+                trimmed
+            );
+        }
+
+        const german = trimmed.slice(0, separator).trim();
+        const english = trimmed.slice(separator + 1).trim();
+
+        if (!german || !english) {
+            throw new Error(
+                "Bitte beide Übersetzungen angeben: " + trimmed
+            );
+        }
+
+        let group = categories.find(c => c.category === currentCategory);
+
+        if (!group) {
+            group = { category: currentCategory, phrases: [] };
+            categories.push(group);
+        }
+
+        group.phrases.push({ de: german, en: english });
+    });
+
+    return categories;
+}
+
+
+async function saveSpeakingTopic() {
+    const row = {
+        level: document.getElementById("contentLevel").value,
+        category: document.getElementById("category").value.trim()
+            || "Sprechen",
+        content_type: "sprechen",
+
+        title: document.getElementById("speakingTitle").value.trim(),
+        summary: document.getElementById("speakingSummary").value.trim(),
+        explanation: document.getElementById("speakingExplanation").value.trim(),
+        explanation_en: document.getElementById("speakingExplanationEn").value.trim(),
+
+        speaking_phrases: parseSpeakingPhrases(
+            document.getElementById("speakingPhrases").value
+        ),
+
+        dialogue: linesToArray(
+            document.getElementById("speakingDialogue").value
+        ).map(line => {
+            const separator = line.indexOf(":");
+
+            if (separator === -1) {
+                return { speaker: "", text: line };
+            }
+
+            return {
+                speaker: line.slice(0, separator).trim(),
+                text: line.slice(separator + 1).trim()
+            };
+        }),
+
+        grammar_notes: linesToArray(
+            document.getElementById("speakingGrammar").value
+        ),
+
+        merke: document.getElementById("speakingMerke").value.trim(),
+        icon: document.getElementById("speakingIcon").value.trim() || "🗣️",
+        image_url: document.getElementById("speakingImage").value.trim() || null,
+        sort_order: getSortOrder(),
+        published: true
+    };
+
+    if (row.level !== "B2") {
+        throw new Error("Bitte für diese Sprechen-Bibliothek das Niveau B2 auswählen.");
+    }
+
+    if (!row.title) {
+        throw new Error("Bitte einen Titel eingeben.");
+    }
+
+    if (!row.explanation) {
+        throw new Error("Bitte die deutsche Erklärung eingeben.");
+    }
+
+    if (!row.explanation_en) {
+        throw new Error("Bitte die englische Erklärung eingeben.");
+    }
+
+    if (row.speaking_phrases.length === 0) {
+        throw new Error("Bitte mindestens eine Redewendung mit englischer Übersetzung eingeben.");
+    }
+
+    const { error } = await adminSupabase
+        .from("topics")
+        .insert(row);
+
+    if (error) throw error;
+}
+
 
 // ======================================================
 // CLEAR FORM
@@ -593,6 +721,9 @@ async function handleSave(event) {
 
             await saveGrammar();
 
+        }
+        else if (selectedContentType === "sprechen") {
+            await saveSpeakingTopic();
         }
 
 
