@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Deutsch B2 Sprechen: Redemittel, Dialoge und Grammatik.">
+    <title>B2 Sprechen | DeutschWelt</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .speaking-page { max-width: 1000px; margin: auto; padding: 24px; font-family: Arial, sans-serif; }
+        .speaking-header { margin-bottom: 28px; }
+        .speaking-header a { margin-right: 16px; }
+        .speaking-toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+        .speaking-toolbar input, .speaking-toolbar select { padding: 10px; }
+        .speaking-layout { display: grid; grid-template-columns: minmax(190px, 260px) 1fr; gap: 24px; }
+        .speaking-nav, .speaking-card { padding: 18px; border: 1px solid #ddd; border-radius: 12px; }
+        .speaking-nav button { display: block; width: 100%; text-align: left; padding: 10px; margin: 4px 0; border: 0; border-radius: 7px; cursor: pointer; background: transparent; }
+        .speaking-nav button.active { background: #e8f0fe; font-weight: bold; }
+        .speaking-card h2 { margin-top: 0; }
+        .speaking-section { margin-top: 24px; }
+        .phrase-group { margin: 16px 0; }
+        .phrase-item { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .phrase-de { font-weight: bold; }
+        .phrase-en { margin-top: 4px; color: #555; }
+        .dialogue-line { margin: 10px 0; padding: 10px 12px; background: #f5f7fa; border-radius: 8px; }
+        .dialogue-speaker { font-weight: bold; }
+        .speaking-merke { padding: 14px; border-left: 4px solid #d4a72c; background: #fff9e8; border-radius: 6px; }
+        .speaking-message { padding: 12px; }
+        .speaking-error { color: #b42318; }
+        @media (max-width: 650px) { .speaking-layout { grid-template-columns: 1fr; } .speaking-page { padding: 14px; } }
+    </style>
+</head>
+<body>
+    <main class="speaking-page">
+        <header class="speaking-header">
+            <p><a href="index.html">← DeutschWelt</a> <a href="admin.html">Admin</a></p>
+            <h1>🗣️ DeutschWelt – B2 Sprechen</h1>
+            <p>Übe Redemittel, Gespräche und wichtige Satzstrukturen für die B2-Prüfung und den Berufsalltag.</p>
+        </header>
+
+        <div class="speaking-toolbar">
+            <label>
+                Thema suchen
+                <input id="speakingSearch" type="search" placeholder="Thema eingeben …">
+            </label>
+            <label>
+                Kategorie
+                <select id="speakingCategory">
+                    <option value="">Alle Kategorien</option>
+                </select>
+            </label>
+        </div>
+
+        <p id="speakingStatus" class="speaking-message" role="status">Themen werden geladen …</p>
+
+        <div class="speaking-layout">
+            <nav class="speaking-nav" aria-label="Sprechen-Themen">
+                <h2>Themen</h2>
+                <div id="speakingNavigation"></div>
+            </nav>
+
+            <article id="speakingContent" class="speaking-card">
+                <p>Bitte wähle ein Thema aus.</p>
+            </article>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="sprechen.js"></script>
+</body>
+</html>
