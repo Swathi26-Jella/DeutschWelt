@@ -663,6 +663,10 @@ function showTopic(id) {
    ========================================================= */
 
 function buildTopicHTML(topic) {
+    const isSpeaking = topic.content_type === "sprechen";
+
+    const speakingPhrases = parseArray(topic.speaking_phrases);
+    const dialogue = parseArray(topic.dialogue);
 
     const points =
         parseArray(
