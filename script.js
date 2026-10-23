@@ -480,11 +480,7 @@ async function loadLearningPage() {
    ========================================================= */
 
 function renderTopicNavigation() {
-
-    const navigation =
-        document.getElementById(
-            "topicNavigation"
-        );
+    const navigation = document.getElementById("topicNavigation");
 
     if (!navigation) {
         return;
@@ -492,134 +488,118 @@ function renderTopicNavigation() {
 
     navigation.innerHTML = "";
 
+    // Separate regular learning topics from speaking topics.
+    const regularTopics = currentTopics.filter(
+        topic => topic.content_type !== "sprechen"
+    );
 
-    const categories = {};
+    const speakingTopics = currentTopics.filter(
+        topic => topic.content_type === "sprechen"
+    );
 
+    // Helper: create a button for a topic.
+    function createTopicButton(topic) {
+        const button = document.createElement("button");
 
-    currentTopics.forEach(topic => {
+        button.type = "button";
+        button.className = "topic-button";
+        button.dataset.topicId = topic.id;
 
-        const category =
-            topic.category ||
-            "Allgemein";
+        button.innerHTML = `
+            <span class="topic-icon">
+                ${escapeHTML(topic.icon || "📘")}
+            </span>
 
-        if (!categories[category]) {
-            categories[category] = [];
-        }
+            <span class="topic-button-text">
+                ${escapeHTML(topic.title || "")}
+            </span>
 
-        categories[category].push(topic);
+            <span class="topic-nav-audio" title="Titel anhören">
+                🔊
+            </span>
+        `;
 
-    });
+        button.addEventListener("click", event => {
+            const audio = event.target.closest(".topic-nav-audio");
 
+            if (audio) {
+                event.preventDefault();
+                event.stopPropagation();
+                speakGerman(topic.title);
+                return;
+            }
 
-    Object.keys(categories)
-        .forEach(category => {
-
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
-
-            wrapper.className =
-                "topic-category";
-
-
-            const heading =
-                document.createElement(
-                    "h3"
-                );
-
-            heading.textContent =
-                category;
-
-
-            wrapper.appendChild(
-                heading
-            );
-
-
-            categories[category]
-                .forEach(topic => {
-
-                    const button =
-                        document.createElement(
-                            "button"
-                        );
-
-                    button.type = "button";
-
-                    button.className =
-                        "topic-button";
-
-                    button.dataset.topicId =
-                        topic.id;
-
-
-                    button.innerHTML = `
-
-                        <span class="topic-icon">
-                            ${escapeHTML(
-                                topic.icon || "📘"
-                            )}
-                        </span>
-
-                        <span class="topic-button-text">
-                            ${escapeHTML(
-                                topic.title || ""
-                            )}
-                        </span>
-
-                        <span
-                            class="topic-nav-audio"
-                            title="Titel anhören">
-                            🔊
-                        </span>
-
-                    `;
-
-
-                    button.addEventListener(
-                        "click",
-                        event => {
-
-                            const audio =
-                                event.target.closest(
-                                    ".topic-nav-audio"
-                                );
-
-                            if (audio) {
-
-                                event.preventDefault();
-                                event.stopPropagation();
-
-                                speakGerman(
-                                    topic.title
-                                );
-
-                                return;
-                            }
-
-                            showTopic(
-                                topic.id
-                            );
-
-                        }
-                    );
-
-
-                    wrapper.appendChild(
-                        button
-                    );
-
-                });
-
-
-            navigation.appendChild(
-                wrapper
-            );
-
+            showTopic(topic.id);
         });
 
+        return button;
+    }
+
+    // Helper: create a section with a heading.
+    function createSection(title) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "topic-category";
+
+        const heading = document.createElement("h3");
+        heading.textContent = title;
+
+        wrapper.appendChild(heading);
+        navigation.appendChild(wrapper);
+
+        return wrapper;
+    }
+
+    // SECTION 1: Regular learning topics, grouped by category.
+    if (regularTopics.length > 0) {
+        createSection("📘 Themen");
+
+        const categories = {};
+
+        regularTopics.forEach(topic => {
+            const category = topic.category || "Allgemein";
+
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+
+            categories[category].push(topic);
+        });
+
+        Object.keys(categories).forEach(category => {
+            const categoryWrapper = document.createElement("div");
+            categoryWrapper.className = "topic-subcategory";
+
+            const heading = document.createElement("h4");
+            heading.textContent = category;
+            categoryWrapper.appendChild(heading);
+
+            categories[category].forEach(topic => {
+                categoryWrapper.appendChild(createTopicButton(topic));
+            });
+
+            navigation.appendChild(categoryWrapper);
+        });
+    }
+
+    // SECTION 2: Speaking topics, separate from regular topics.
+    if (speakingTopics.length > 0) {
+        const speakingSection = createSection("🗣️ Sprechen");
+
+        speakingTopics.forEach(topic => {
+            speakingSection.appendChild(createTopicButton(topic));
+        });
+    }
+
+    // Keep existing content accessible if no topics exist.
+    if (currentTopics.length === 0) {
+        navigation.innerHTML = `
+            <p class="welcome-content">
+                Noch keine veröffentlichten Themen vorhanden.
+            </p>
+        `;
+    }
 }
+
 
 
 /* =========================================================
@@ -710,9 +690,10 @@ function buildTopicHTML(topic) {
 
                     <div class="eyebrow">
                         ${escapeHTML(
-                            topic.category ||
-                            "Lernwelt"
-                        )}
+                             topic.content_type === "sprechen"
+                             ? "🗣️ Sprechen"
+                             : (topic.category || "Lernwelt")
+                    )}
                     </div>
 
                     <h1 style="margin-top:12px;">
