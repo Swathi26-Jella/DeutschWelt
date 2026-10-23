@@ -663,234 +663,194 @@ function showTopic(id) {
    ========================================================= */
 
 function buildTopicHTML(topic) {
-    const isSpeaking = topic.content_type === "sprechen";
+    const points = parseArray(topic.key_points);
+    const patterns = parseArray(topic.sentence_patterns);
+    const examples = parseArray(topic.examples);
 
+    // Sprechen-specific fields
     const speakingPhrases = parseArray(topic.speaking_phrases);
     const dialogue = parseArray(topic.dialogue);
 
-    const points =
-        parseArray(
-            topic.key_points
-        );
+    let grammarNotes = [];
+    if (Array.isArray(topic.grammar_notes)) {
+        grammarNotes = topic.grammar_notes;
+    } else if (typeof topic.grammar_notes === "string" && topic.grammar_notes.trim()) {
+        try {
+            const parsed = JSON.parse(topic.grammar_notes);
+            grammarNotes = Array.isArray(parsed) ? parsed : [topic.grammar_notes];
+        } catch {
+            grammarNotes = [topic.grammar_notes];
+        }
+    }
 
-    const patterns =
-        parseArray(
-            topic.sentence_patterns
-        );
-
-    const examples =
-        parseArray(
-            topic.examples
-        );
-
+    const isSpeaking = topic.content_type === "sprechen";
 
     return `
-
         <article class="topic-article">
 
             <div class="topic-title-row">
-
                 <div>
-
                     <div class="eyebrow">
-                        ${escapeHTML(
-                             topic.content_type === "sprechen"
-                             ? "🗣️ Sprechen"
-                             : (topic.category || "Lernwelt")
-                    )}
+                        ${escapeHTML(topic.category || "Lernwelt")}
                     </div>
-
                     <h1 style="margin-top:12px;">
-                        ${escapeHTML(
-                            topic.icon || "📘"
-                        )}
-                        ${escapeHTML(
-                            topic.title || ""
-                        )}
+                        ${escapeHTML(topic.icon || "📘")}
+                        ${escapeHTML(topic.title || "")}
                     </h1>
-
                 </div>
-
-                ${audioButton(
-                    topic.title,
-                    "Thema anhören"
-                )}
-
+                ${audioButton(topic.title, "Thema anhören")}
             </div>
 
+            ${topic.summary ? `
+                <p class="topic-summary">
+                    ${escapeHTML(topic.summary)}
+                </p>
+            ` : ""}
 
-            ${
-                topic.summary
-                    ? `
-                        <p class="topic-summary">
-                            ${escapeHTML(
-                                topic.summary
-                            )}
-                        </p>
-                    `
-                    : ""
-            }
+            ${topic.explanation ? `
+                <section class="content-section">
+                    <h3>📖 Erklärung auf Deutsch</h3>
+                    <p>${escapeHTML(topic.explanation)}</p>
+                    ${audioButton(topic.explanation, "Deutsche Erklärung anhören")}
+                </section>
+            ` : ""}
 
+            ${isSpeaking && topic.explanation_en ? `
+                <section class="content-section">
+                    <h3>🇬🇧 Explanation in English</h3>
+                    <p>${escapeHTML(topic.explanation_en)}</p>
+                </section>
+            ` : ""}
 
-            ${
-                topic.explanation
-                    ? `
-                        <section class="content-section">
+            ${isSpeaking && speakingPhrases.length ? `
+                <section class="content-section">
+                    <h3>🗣️ Wichtige Redemittel</h3>
 
-                            <h3>
-                                📖 Erklärung
-                            </h3>
+                    ${speakingPhrases.map(group => {
+                        if (typeof group === "string") {
+                            return `<p>${escapeHTML(group)}</p>`;
+                        }
 
-                            <p>
+                        const phrases = parseArray(group.phrases);
+
+                        return `
+                            <div class="speaking-phrase-group">
+                                <h4>${escapeHTML(group.category || "Redemittel")}</h4>
+                                <div class="example-list">
+                                    ${phrases.map(phrase => {
+                                        if (typeof phrase === "string") {
+                                            return `<div class="example-box">${escapeHTML(phrase)}</div>`;
+                                        }
+
+                                        return `
+                                            <div class="example-box">
+                                                <div>
+                                                    <strong>${escapeHTML(phrase.de || "")}</strong>
+                                                    ${audioButton(phrase.de, "Redemittel anhören")}
+                                                    ${phrase.en ? `<p>${escapeHTML(phrase.en)}</p>` : ""}
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join("")}
+                                </div>
+                            </div>
+                        `;
+                    }).join("")}
+                </section>
+            ` : ""}
+
+            ${isSpeaking && dialogue.length ? `
+                <section class="content-section">
+                    <h3>🎭 Beispieldialog</h3>
+
+                    <div class="dialogue-list">
+                        ${dialogue.map(line => {
+                            if (typeof line === "string") {
+                                return `<p>${escapeHTML(line)}</p>`;
+                            }
+
+                            return `
+                                <div class="dialogue-line">
+                                    <strong>${escapeHTML(line.speaker || "Person")}:</strong>
+                                    <span>${escapeHTML(line.text || "")}</span>
+                                    ${audioButton(line.text, "Dialog anhören")}
+                                </div>
+                            `;
+                        }).join("")}
+                    </div>
+                </section>
+            ` : ""}
+
+            ${isSpeaking && grammarNotes.length ? `
+                <section class="content-section">
+                    <h3>🧩 Grammatik und sprachliche Hinweise</h3>
+                    <ul class="content-list">
+                        ${grammarNotes.map(note => `
+                            <li>
                                 ${escapeHTML(
-                                    topic.explanation
+                                    typeof note === "string"
+                                        ? note
+                                        : note.text || note.de || JSON.stringify(note)
                                 )}
-                            </p>
+                            </li>
+                        `).join("")}
+                    </ul>
+                </section>
+            ` : ""}
 
-                        </section>
-                    `
-                    : ""
-            }
+            ${points.length ? `
+                <section class="content-section">
+                    <h3>⭐ Wichtig</h3>
+                    <ul class="content-list">
+                        ${points.map(item => `
+                            <li>${escapeHTML(item)}</li>
+                        `).join("")}
+                    </ul>
+                </section>
+            ` : ""}
 
-
-            ${
-                points.length
-                    ? `
-                        <section class="content-section">
-
-                            <h3>
-                                ⭐ Wichtig
-                            </h3>
-
-                            <ul class="content-list">
-
-                                ${points.map(
-                                    item => `
-                                        <li>
-                                            ${escapeHTML(item)}
-                                        </li>
-                                    `
-                                ).join("")}
-
-                            </ul>
-
-                        </section>
-                    `
-                    : ""
-            }
-
-
-            ${
-                patterns.length
-                    ? `
-                        <section class="content-section">
-
-                            <h3>
-                                🧩 Satzmuster
-                            </h3>
-
-                            <div class="pattern-list">
-
-                                ${patterns.map(
-                                    item => `
-
-                                        <div class="pattern-box">
-
-                                            <span>
-                                                ${escapeHTML(item)}
-                                            </span>
-
-                                            ${audioButton(
-                                                item,
-                                                "Satzmuster anhören"
-                                            )}
-
-                                        </div>
-
-                                    `
-                                ).join("")}
-
+            ${patterns.length ? `
+                <section class="content-section">
+                    <h3>🧩 Satzmuster</h3>
+                    <div class="pattern-list">
+                        ${patterns.map(item => `
+                            <div class="pattern-box">
+                                <span>${escapeHTML(item)}</span>
+                                ${audioButton(item, "Satzmuster anhören")}
                             </div>
+                        `).join("")}
+                    </div>
+                </section>
+            ` : ""}
 
-                        </section>
-                    `
-                    : ""
-            }
-
-
-            ${
-                examples.length
-                    ? `
-                        <section class="content-section">
-
-                            <h3>
-                                💬 Beispiele
-                            </h3>
-
-                            <div class="example-list">
-
-                                ${examples.map(
-                                    item => `
-
-                                        <div class="example-box">
-
-                                            <span>
-                                                ${escapeHTML(item)}
-                                            </span>
-
-                                            ${audioButton(
-                                                item,
-                                                "Beispiel anhören"
-                                            )}
-
-                                        </div>
-
-                                    `
-                                ).join("")}
-
+            ${examples.length ? `
+                <section class="content-section">
+                    <h3>💬 Beispiele</h3>
+                    <div class="example-list">
+                        ${examples.map(item => `
+                            <div class="example-box">
+                                <span>${escapeHTML(item)}</span>
+                                ${audioButton(item, "Beispiel anhören")}
                             </div>
+                        `).join("")}
+                    </div>
+                </section>
+            ` : ""}
 
-                        </section>
-                    `
-                    : ""
-            }
-
-
-            ${
-                topic.merke
-                    ? `
-                        <section class="merke-box">
-
-                            <div class="merke-icon">
-                                💡
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Merke
-                                </strong>
-
-                                <p>
-                                    ${escapeHTML(
-                                        topic.merke
-                                    )}
-
-                                    ${audioButton(
-                                        topic.merke,
-                                        "Merksatz anhören"
-                                    )}
-                                </p>
-
-                            </div>
-
-                        </section>
-                    `
-                    : ""
-            }
+            ${topic.merke ? `
+                <section class="merke-box">
+                    <div class="merke-icon">💡</div>
+                    <div>
+                        <strong>Merke</strong>
+                        <p>
+                            ${escapeHTML(topic.merke)}
+                            ${audioButton(topic.merke, "Merksatz anhören")}
+                        </p>
+                    </div>
+                </section>
+            ` : ""}
 
         </article>
-
     `;
 }
 
