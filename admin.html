@@ -189,6 +189,14 @@
                         </span>
 
                     </button>
+                    
+                   <button
+                       type="button"
+                       class="content-type-button"
+                       data-content-type="sprechen">
+                       🗣️
+                       <span>Sprechen</span>
+                   </button>
 
                 </div>
 
@@ -716,6 +724,77 @@
 
                     </div>
 
+           
+<!-- SPRECHEN FORM -->
+<div id="sprechenForm" class="content-form-section hidden">
+    <div class="form-section">
+        <h3>🗣️ B2 Sprechen</h3>
+
+        <div class="form-group">
+            <label for="speakingTitle">Titel</label>
+            <input id="speakingTitle" type="text"
+                placeholder="Ein Teamgespräch führen">
+        </div>
+
+        <div class="form-group">
+            <label for="speakingSummary">Kurze Zusammenfassung</label>
+            <input id="speakingSummary" type="text"
+                placeholder="Was lernen die Teilnehmer?">
+        </div>
+
+        <div class="form-group">
+            <label for="speakingExplanation">Erklärung auf Deutsch</label>
+            <textarea id="speakingExplanation" rows="4"
+                placeholder="Erklärung auf Deutsch"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="speakingExplanationEn">Explanation in English</label>
+            <textarea id="speakingExplanationEn" rows="4"
+                placeholder="Explain the topic in English"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="speakingPhrases">Redemittel mit Übersetzungen</label>
+            <textarea id="speakingPhrases" rows="10"
+                placeholder="Category: Meinung äußern&#10;Meiner Meinung nach ... | In my opinion ...&#10;Ich bin der Ansicht, dass ... | I am of the opinion that ...&#10;&#10;Category: Vorschläge machen&#10;Ich würde vorschlagen, dass ... | I would suggest that ..."></textarea>
+            <small>Use "Category: ..." for a category. Each phrase must be German | English.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="speakingDialogue">Beispieldialog</label>
+            <textarea id="speakingDialogue" rows="10"
+                placeholder="Anna: Ich würde gern über unser Team-Event sprechen.&#10;Markus: Gute Idee. Was schlägst du vor?"></textarea>
+            <small>Write one dialogue line per row, for example: Anna: Guten Morgen!</small>
+        </div>
+
+        <div class="form-group">
+            <label for="speakingGrammar">Grammatik und Satzmuster</label>
+            <textarea id="speakingGrammar" rows="6"
+                placeholder="Ich würde vorschlagen, dass wir ...&#10;Verb position in a dass-clause: the verb goes to the end."></textarea>
+            <small>One grammar note or sentence pattern per line.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="speakingMerke">Merke</label>
+            <textarea id="speakingMerke" rows="3"
+                placeholder="Wichtig: Höre aktiv zu und begründe deine Meinung."></textarea>
+        </div>
+
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="speakingIcon">Symbol / Emoji</label>
+                <input id="speakingIcon" type="text" value="🗣️">
+            </div>
+
+            <div class="form-group">
+                <label for="speakingImage">Bild-URL (optional)</label>
+                <input id="speakingImage" type="url"
+                    placeholder="https://...">
+            </div>
+        </div>
+    </div>
+</div>
 
 
                     <!-- SAVE AREA -->
